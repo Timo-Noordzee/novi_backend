@@ -2,14 +2,18 @@ package com.timo_noordzee.novi.backend.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.timo_noordzee.novi.backend.domain.Role;
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity(name = "employee")
 public class EmployeeEntity {
 
@@ -32,5 +36,5 @@ public class EmployeeEntity {
 
     @Column(name = "role")
     private Role role;
-    
+
 }

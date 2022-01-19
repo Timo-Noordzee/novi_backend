@@ -1,10 +1,10 @@
 package com.timo_noordzee.novi.backend.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
+@Builder
 public class UpdateEmployeeDto {
 
     private String name;
