@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 @Builder
-public class CreateEmployeeDto implements CreateDto {
+public class CreateCustomerDto implements CreateDto {
 
     private String id;
 
@@ -24,9 +24,6 @@ public class CreateEmployeeDto implements CreateDto {
     private String email;
 
     @NotBlank(message = "field is required")
-    private String password;
-
-    @NotBlank(message = "field is required")
-    private String role;
+    private String phone;
 
 }

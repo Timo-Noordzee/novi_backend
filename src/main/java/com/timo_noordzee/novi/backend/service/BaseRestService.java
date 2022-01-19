@@ -50,7 +50,7 @@ public abstract class BaseRestService<E, ID, C extends CreateDto, U, R extends J
             }
         }
 
-        validateConstrains(createDto);
+        validateCreateConstrains(createDto);
 
         final E entity = fromCreateDto(createDto);
         return repository.save(entity);
@@ -58,11 +58,15 @@ public abstract class BaseRestService<E, ID, C extends CreateDto, U, R extends J
 
     public E update(final String id, final U updateDto) {
         final E entity = getById(id);
+        validateUpdateConstraints(entity, updateDto);
         updateWithDto(entity, updateDto);
         return repository.save(entity);
     }
 
-    protected void validateConstrains(final C createDto) {
+    protected void validateCreateConstrains(final C createDto) {
+    }
+
+    protected void validateUpdateConstraints(final E entity, final U updateDto) {
     }
 
     protected E fromCreateDto(final C createDto) {

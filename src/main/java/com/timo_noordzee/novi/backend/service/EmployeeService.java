@@ -33,7 +33,7 @@ public class EmployeeService extends BaseRestService<EmployeeEntity, UUID, Creat
     }
 
     @Override
-    protected void validateConstrains(final CreateEmployeeDto createDto) {
+    protected void validateCreateConstrains(final CreateEmployeeDto createDto) {
         if (repository.existsByEmail(createDto.getEmail())) {
             throw new EmailTakenException(createDto.getEmail());
         }
