@@ -5,6 +5,8 @@ import com.timo_noordzee.novi.backend.dto.CreateEmployeeDto;
 import com.timo_noordzee.novi.backend.dto.UpdateEmployeeDto;
 import com.timo_noordzee.novi.backend.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -28,10 +30,11 @@ public class EmployeeController {
     }
 
     @PostMapping("")
-    public EmployeeEntity addEmployee(
+    public ResponseEntity<EmployeeEntity> addEmployee(
             @Valid @RequestBody final CreateEmployeeDto createEmployeeDto
     ) {
-        return employeeService.add(createEmployeeDto);
+        final EmployeeEntity employeeEntity = employeeService.add(createEmployeeDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(employeeEntity);
     }
 
     @PutMapping("/{id}")

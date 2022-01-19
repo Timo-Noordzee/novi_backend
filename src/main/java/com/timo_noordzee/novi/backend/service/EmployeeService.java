@@ -3,6 +3,7 @@ package com.timo_noordzee.novi.backend.service;
 import com.timo_noordzee.novi.backend.data.EmployeeEntity;
 import com.timo_noordzee.novi.backend.dto.CreateEmployeeDto;
 import com.timo_noordzee.novi.backend.dto.UpdateEmployeeDto;
+import com.timo_noordzee.novi.backend.exception.EmailTakenException;
 import com.timo_noordzee.novi.backend.mapper.EmployeeMapper;
 import com.timo_noordzee.novi.backend.repository.EmployeeRepository;
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +30,13 @@ public class EmployeeService extends BaseRestService<EmployeeEntity, UUID, Creat
     @Override
     String entityType() {
         return EmployeeEntity.class.getSimpleName();
+    }
+
+    @Override
+    protected void validateConstrains(final CreateEmployeeDto createDto) {
+        if (repository.existsByEmail(createDto.getEmail())) {
+            throw new EmailTakenException(createDto.getEmail());
+        }
     }
 
     @Override
