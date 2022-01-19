@@ -4,6 +4,7 @@ import com.timo_noordzee.novi.backend.domain.CreateDto;
 import lombok.Builder;
 import lombok.Data;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 @Data
@@ -18,6 +19,7 @@ public class CreateEmployeeDto implements CreateDto {
     @NotBlank(message = "field is required")
     private String surname;
 
+    @Email(message = "isn't a valid email address")
     @NotBlank(message = "field is required")
     private String email;
 
