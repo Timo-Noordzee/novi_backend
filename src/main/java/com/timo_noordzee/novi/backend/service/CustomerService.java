@@ -1,5 +1,6 @@
 package com.timo_noordzee.novi.backend.service;
 
+import com.cosium.spring.data.jpa.entity.graph.domain.EntityGraphs;
 import com.timo_noordzee.novi.backend.data.CustomerEntity;
 import com.timo_noordzee.novi.backend.dto.CreateCustomerDto;
 import com.timo_noordzee.novi.backend.dto.UpdateCustomerDto;
@@ -9,6 +10,7 @@ import com.timo_noordzee.novi.backend.repository.CustomerRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -26,6 +28,11 @@ public class CustomerService extends BaseRestService<CustomerEntity, UUID, Creat
     @Override
     String entityType() {
         return CustomerEntity.class.getSimpleName();
+    }
+
+    @Override
+    protected Optional<CustomerEntity> findById(final UUID uuid) {
+        return repository.findById(uuid, EntityGraphs.named(CustomerEntity.GRAPH_WITH_VEHICLES));
     }
 
     @Override
