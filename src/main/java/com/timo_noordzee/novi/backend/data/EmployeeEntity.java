@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.timo_noordzee.novi.backend.domain.Role;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.UUID;
 
 @Getter
@@ -15,7 +13,12 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "employee")
+@NamedEntityGraphs(value = {
+        @NamedEntityGraph(name = EmployeeEntity.GRAPH_DEFAULT),
+})
 public class EmployeeEntity {
+
+    public static final String GRAPH_DEFAULT = "Employee.default";
 
     @Id
     @Column(name = "id", unique = true)

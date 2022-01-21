@@ -1,5 +1,6 @@
 package com.timo_noordzee.novi.backend.service;
 
+import com.cosium.spring.data.jpa.entity.graph.domain.EntityGraph;
 import com.github.javafaker.Faker;
 import com.timo_noordzee.novi.backend.data.CustomerEntity;
 import com.timo_noordzee.novi.backend.dto.CreateCustomerDto;
@@ -69,7 +70,7 @@ public class CustomerServiceTest {
 
     @Test
     void getByIdForNonexistentCustomerThrowsEntityNotFoundException() {
-        when(customerRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+        when(customerRepository.findById(any(UUID.class), any(EntityGraph.class))).thenReturn(Optional.empty());
         final String id = "d145f0fa-f261-41d7-8c0d-f0bc43ffd805";
 
         final EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () ->
@@ -149,7 +150,7 @@ public class CustomerServiceTest {
                 .email(faker.internet().emailAddress())
                 .phone(faker.phoneNumber().cellPhone())
                 .build();
-        when(customerRepository.findById(any(UUID.class))).thenReturn(Optional.of(exampleCustomer));
+        when(customerRepository.findById(any(UUID.class), any(EntityGraph.class))).thenReturn(Optional.of(exampleCustomer));
         when(customerRepository.existsByEmail(any(String.class))).thenReturn(true);
 
         final EmailTakenException exception = assertThrows(EmailTakenException.class, () ->
@@ -168,7 +169,7 @@ public class CustomerServiceTest {
                 .phone(faker.phoneNumber().cellPhone())
                 .build();
         when(customerRepository.save(any(CustomerEntity.class))).thenAnswer(i -> i.getArgument(0));
-        when(customerRepository.findById(any(UUID.class))).thenReturn(Optional.of(exampleCustomer));
+        when(customerRepository.findById(any(UUID.class), any(EntityGraph.class))).thenReturn(Optional.of(exampleCustomer));
 
         final CustomerEntity updatedCustomer = customerService.update(id, updateCustomerDto);
 
@@ -181,7 +182,7 @@ public class CustomerServiceTest {
     @Test
     void deleteReturnsDeletedCustomer() {
         final String id = "d145f0fa-f261-41d7-8c0d-f0bc43ffd805";
-        when(customerRepository.findById(any(UUID.class))).thenReturn(Optional.of(exampleCustomer));
+        when(customerRepository.findById(any(UUID.class), any(EntityGraph.class))).thenReturn(Optional.of(exampleCustomer));
 
         final CustomerEntity deletedCustomer = customerService.deleteById(id);
 
