@@ -1,17 +1,19 @@
 package com.timo_noordzee.novi.backend.service;
 
+import com.cosium.spring.data.jpa.entity.graph.repository.EntityGraphJpaRepository;
 import com.timo_noordzee.novi.backend.domain.CreateDto;
 import com.timo_noordzee.novi.backend.exception.EntityAlreadyExistsException;
 import com.timo_noordzee.novi.backend.exception.EntityNotFoundException;
 import com.timo_noordzee.novi.backend.exception.InvalidUUIDException;
 import com.timo_noordzee.novi.backend.mapper.EntityMapper;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
-public abstract class BaseRestService<E, ID, C extends CreateDto, U, R extends JpaRepository<E, ID>, M extends EntityMapper<E, C, U>> {
+public abstract class BaseRestService<E, ID extends Serializable, C extends CreateDto, U, R extends EntityGraphJpaRepository<E, ID>, M extends EntityMapper<E, C, U>> {
 
     protected final R repository;
     protected final M mapper;
@@ -26,12 +28,12 @@ public abstract class BaseRestService<E, ID, C extends CreateDto, U, R extends J
     abstract String entityType();
 
     public List<E> getAll() {
-        return repository.findAll();
+        return findAll();
     }
 
     public E getById(final String id) {
         final ID actualId = parseId(id);
-        return repository.findById(actualId).orElseThrow(() -> new EntityNotFoundException(id, entityType()));
+        return findById(actualId).orElseThrow(() -> new EntityNotFoundException(id, entityType()));
     }
 
     public E deleteById(final String id) {
@@ -67,6 +69,14 @@ public abstract class BaseRestService<E, ID, C extends CreateDto, U, R extends J
     }
 
     protected void validateUpdateConstraints(final E entity, final U updateDto) {
+    }
+
+    protected List<E> findAll() {
+        return repository.findAll();
+    }
+
+    protected Optional<E> findById(final ID id) {
+        return repository.findById(id);
     }
 
     protected E fromCreateDto(final C createDto) {

@@ -1,13 +1,13 @@
 package com.timo_noordzee.novi.backend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.javafaker.Faker;
 import com.timo_noordzee.novi.backend.data.CustomerEntity;
 import com.timo_noordzee.novi.backend.dto.CreateCustomerDto;
 import com.timo_noordzee.novi.backend.dto.UpdateCustomerDto;
 import com.timo_noordzee.novi.backend.exception.EmailTakenException;
 import com.timo_noordzee.novi.backend.exception.EntityNotFoundException;
 import com.timo_noordzee.novi.backend.service.CustomerService;
+import com.timo_noordzee.novi.backend.util.CustomerTestUtils;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,9 +20,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
@@ -42,30 +40,15 @@ public class CustomerControllerTest {
     @MockBean
     private CustomerService customerService;
 
-    private final Faker faker = new Faker(new Locale("nl"));
+    private final CustomerTestUtils customerTestUtils = new CustomerTestUtils();
 
     private CustomerEntity firstCustomer;
     private CustomerEntity secondCustomer;
 
     @BeforeEach
     void setup() {
-        firstCustomer = CustomerEntity.builder()
-                .id(UUID.randomUUID())
-                .name(faker.name().firstName())
-                .surname(faker.name().lastName())
-                .email(faker.internet().emailAddress())
-                .phone(faker.phoneNumber().phoneNumber())
-                .createdAt(faker.date().past(1, TimeUnit.DAYS))
-                .build();
-
-        secondCustomer = CustomerEntity.builder()
-                .id(UUID.randomUUID())
-                .name(faker.name().firstName())
-                .surname(faker.name().lastName())
-                .email(faker.internet().emailAddress())
-                .phone(faker.phoneNumber().phoneNumber())
-                .createdAt(faker.date().past(1, TimeUnit.DAYS))
-                .build();
+        firstCustomer = customerTestUtils.generateMockEntity();
+        secondCustomer = customerTestUtils.generateMockEntity();
     }
 
     @Test
@@ -86,7 +69,7 @@ public class CustomerControllerTest {
 
     @Test
     void getByIdOnNonexistentCustomerReturnsEntityNotFoundException() throws Exception {
-        final String id = "be3ca880-8c7b-44d3-9ec2-1c16d1c041a8";
+        final String id = UUID.randomUUID().toString();
         when(customerService.getById(any(String.class)))
                 .thenThrow(new EntityNotFoundException(id, CustomerEntity.class.getSimpleName()));
 
@@ -152,13 +135,8 @@ public class CustomerControllerTest {
 
     @Test
     void updatingWithValidPayloadReturnsUpdatedCustomer() throws Exception {
-        final String id = "be3ca880-8c7b-44d3-9ec2-1c16d1c041a8";
-        final UpdateCustomerDto updateCustomerDto = UpdateCustomerDto.builder()
-                .name(faker.name().firstName())
-                .surname(faker.name().lastName())
-                .email(faker.internet().emailAddress())
-                .phone(faker.internet().password())
-                .build();
+        final String id = UUID.randomUUID().toString();
+        final UpdateCustomerDto updateCustomerDto = customerTestUtils.generateMockUpdateDto();
         when(customerService.update(any(String.class), any(UpdateCustomerDto.class))).thenReturn(secondCustomer);
 
         final ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
@@ -172,7 +150,7 @@ public class CustomerControllerTest {
 
     @Test
     void deletingExistingCustomerReturnsCustomer() throws Exception {
-        final String id = "be3ca880-8c7b-44d3-9ec2-1c16d1c041a8";
+        final String id = UUID.randomUUID().toString();
         when(customerService.deleteById(any(String.class))).thenReturn(firstCustomer);
 
         final ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders

@@ -1,14 +1,13 @@
 package com.timo_noordzee.novi.backend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.javafaker.Faker;
 import com.timo_noordzee.novi.backend.data.EmployeeEntity;
-import com.timo_noordzee.novi.backend.domain.Role;
 import com.timo_noordzee.novi.backend.dto.CreateEmployeeDto;
 import com.timo_noordzee.novi.backend.dto.UpdateEmployeeDto;
 import com.timo_noordzee.novi.backend.exception.EmailTakenException;
 import com.timo_noordzee.novi.backend.exception.EntityNotFoundException;
 import com.timo_noordzee.novi.backend.service.EmployeeService;
+import com.timo_noordzee.novi.backend.util.EmployeeTestUtils;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -42,30 +40,15 @@ public class EmployeeControllerTest {
     @MockBean
     private EmployeeService employeeService;
 
-    private final Faker faker = new Faker(new Locale("nl"));
+    private final EmployeeTestUtils employeeTestUtils = new EmployeeTestUtils();
 
     private EmployeeEntity firstEmployee;
     private EmployeeEntity secondEmployee;
 
     @BeforeEach
     void setup() {
-        firstEmployee = EmployeeEntity.builder()
-                .id(UUID.randomUUID())
-                .name(faker.name().firstName())
-                .surname(faker.name().lastName())
-                .email(faker.internet().emailAddress())
-                .password("$2a$10$uPDc1UgeXiclJ84XYReOE.9ZlqlAwIT6MS6pyKiVMWnidZJf5ocQK")
-                .role(Role.ADMIN)
-                .build();
-
-        secondEmployee = EmployeeEntity.builder()
-                .id(UUID.randomUUID())
-                .name(faker.name().firstName())
-                .surname(faker.name().lastName())
-                .email(faker.internet().emailAddress())
-                .password("$2a$10$UcqexFaqF6M6zJoBrZGYze4r9tBSTTc.dQMj63e.7fcx.pOc03dNG")
-                .role(Role.MECHANIC)
-                .build();
+        firstEmployee = employeeTestUtils.generateMockEntity();
+        secondEmployee = employeeTestUtils.generateMockEntity();
     }
 
     @Test
@@ -80,10 +63,10 @@ public class EmployeeControllerTest {
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id", Is.is(firstEmployee.getId().toString())))
                 .andExpect(jsonPath("$[0].password").doesNotExist())
-                .andExpect(jsonPath("$[0].role", Is.is(Role.ADMIN.getValue())))
+                .andExpect(jsonPath("$[0].role", Is.is(firstEmployee.getRole().getValue())))
                 .andExpect(jsonPath("$[1].id", Is.is(secondEmployee.getId().toString())))
                 .andExpect(jsonPath("$[1].password").doesNotExist())
-                .andExpect(jsonPath("$[1].role", Is.is(Role.MECHANIC.getValue())));
+                .andExpect(jsonPath("$[1].role", Is.is(secondEmployee.getRole().getValue())));
     }
 
     @Test
@@ -132,15 +115,10 @@ public class EmployeeControllerTest {
 
     @Test
     void addingWithValidPayloadReturnsEmployeeEntity() throws Exception {
-        final CreateEmployeeDto createEmployeeDto = CreateEmployeeDto.builder()
-                .id(firstEmployee.getId().toString())
-                .name(firstEmployee.getName())
-                .surname(firstEmployee.getSurname())
-                .email(firstEmployee.getEmail())
-                .password("123456")
-                .role("admin")
-                .build();
-        when(employeeService.add(any(CreateEmployeeDto.class))).thenReturn(firstEmployee);
+        final EmployeeEntity employeeEntity = employeeTestUtils.generateMockEntity();
+        final CreateEmployeeDto createEmployeeDto = employeeTestUtils.generateMockCreateDto();
+        createEmployeeDto.setId(employeeEntity.getId().toString());
+        when(employeeService.add(any(CreateEmployeeDto.class))).thenReturn(employeeEntity);
 
         final ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
                 .post("/employees")
@@ -148,18 +126,18 @@ public class EmployeeControllerTest {
                 .content(objectMapper.writeValueAsString(createEmployeeDto)));
 
         resultActions.andExpect(status().isCreated());
-        assertResultMatchesEntity(resultActions, firstEmployee);
+        resultActions.andExpect(jsonPath("$.id", Is.is(employeeEntity.getId().toString())));
+        resultActions.andExpect(jsonPath("$.name", Is.is(employeeEntity.getName())));
+        resultActions.andExpect(jsonPath("$.surname", Is.is(employeeEntity.getSurname())));
+        resultActions.andExpect(jsonPath("$.email", Is.is(employeeEntity.getEmail())));
+        resultActions.andExpect(jsonPath("$.role", Is.is(employeeEntity.getRole().toString())));
+        resultActions.andExpect(jsonPath("$.password").doesNotExist());
     }
 
     @Test
     void updatingWithValidPayloadReturnsUpdatedEmployee() throws Exception {
-        final String id = "be3ca880-8c7b-44d3-9ec2-1c16d1c041a8";
-        final UpdateEmployeeDto updateEmployeeDto = UpdateEmployeeDto.builder()
-                .name(faker.name().firstName())
-                .surname(faker.name().lastName())
-                .role(Role.ADMINISTRATIVE.getValue())
-                .password(faker.internet().password())
-                .build();
+        final String id = UUID.randomUUID().toString();
+        final UpdateEmployeeDto updateEmployeeDto = employeeTestUtils.generateMockUpdateDto();
         when(employeeService.update(any(String.class), any(UpdateEmployeeDto.class))).thenReturn(secondEmployee);
 
         final ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
@@ -173,7 +151,7 @@ public class EmployeeControllerTest {
 
     @Test
     void deletingExistingEmployeeReturnsEmployee() throws Exception {
-        final String id = "be3ca880-8c7b-44d3-9ec2-1c16d1c041a8";
+        final String id = UUID.randomUUID().toString();
         when(employeeService.deleteById(any(String.class))).thenReturn(firstEmployee);
 
         final ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders

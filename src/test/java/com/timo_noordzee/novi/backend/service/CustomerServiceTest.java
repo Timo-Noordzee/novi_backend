@@ -1,6 +1,6 @@
 package com.timo_noordzee.novi.backend.service;
 
-import com.github.javafaker.Faker;
+import com.cosium.spring.data.jpa.entity.graph.domain.EntityGraph;
 import com.timo_noordzee.novi.backend.data.CustomerEntity;
 import com.timo_noordzee.novi.backend.dto.CreateCustomerDto;
 import com.timo_noordzee.novi.backend.dto.UpdateCustomerDto;
@@ -10,6 +10,7 @@ import com.timo_noordzee.novi.backend.exception.EntityNotFoundException;
 import com.timo_noordzee.novi.backend.exception.InvalidUUIDException;
 import com.timo_noordzee.novi.backend.mapper.CustomerMapper;
 import com.timo_noordzee.novi.backend.repository.CustomerRepository;
+import com.timo_noordzee.novi.backend.util.CustomerTestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +28,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class CustomerServiceTest {
 
-    private final Faker faker = new Faker(new Locale("nl"));
+    private final CustomerTestUtils customerTestUtils = new CustomerTestUtils();
 
     @Mock
     private CustomerRepository customerRepository;
@@ -40,14 +41,7 @@ public class CustomerServiceTest {
     void setup() {
         final CustomerMapper customerMapper = Mappers.getMapper(CustomerMapper.class);
         customerService = new CustomerService(customerRepository, customerMapper);
-        exampleCustomer = CustomerEntity.builder()
-                .id(UUID.randomUUID())
-                .name(faker.name().firstName())
-                .surname(faker.name().lastName())
-                .email(faker.internet().emailAddress())
-                .phone(faker.phoneNumber().cellPhone())
-                .createdAt(new Date())
-                .build();
+        exampleCustomer = customerTestUtils.generateMockEntity();
     }
 
     @Test
@@ -69,7 +63,7 @@ public class CustomerServiceTest {
 
     @Test
     void getByIdForNonexistentCustomerThrowsEntityNotFoundException() {
-        when(customerRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+        when(customerRepository.findById(any(UUID.class), any(EntityGraph.class))).thenReturn(Optional.empty());
         final String id = "d145f0fa-f261-41d7-8c0d-f0bc43ffd805";
 
         final EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () ->
@@ -81,13 +75,7 @@ public class CustomerServiceTest {
     @Test
     void addAlreadyExistingCustomerThrowsEntityAlreadyExistsException() {
         when(customerRepository.existsById(any(UUID.class))).thenReturn(true);
-        final CreateCustomerDto createCustomerDto = CreateCustomerDto.builder()
-                .id(UUID.randomUUID().toString())
-                .name(faker.name().firstName())
-                .surname(faker.name().lastName())
-                .email(faker.internet().emailAddress())
-                .phone(faker.phoneNumber().cellPhone())
-                .build();
+        final CreateCustomerDto createCustomerDto = customerTestUtils.generateMockCreateDto();
 
         final EntityAlreadyExistsException exception = assertThrows(EntityAlreadyExistsException.class, () ->
                 customerService.add(createCustomerDto));
@@ -99,13 +87,7 @@ public class CustomerServiceTest {
     void addWithTakenEmailThrowsEmailTakenException() {
         when(customerRepository.existsById(any(UUID.class))).thenReturn(false);
         when(customerRepository.existsByEmail(any(String.class))).thenReturn(true);
-        final CreateCustomerDto createCustomerDto = CreateCustomerDto.builder()
-                .id(UUID.randomUUID().toString())
-                .name(faker.name().firstName())
-                .surname(faker.name().lastName())
-                .email(faker.internet().emailAddress())
-                .phone(faker.phoneNumber().cellPhone())
-                .build();
+        final CreateCustomerDto createCustomerDto = customerTestUtils.generateMockCreateDto();
 
         final EmailTakenException exception = assertThrows(EmailTakenException.class, () ->
                 customerService.add(createCustomerDto));
@@ -121,13 +103,7 @@ public class CustomerServiceTest {
             customerEntity.setCreatedAt(new Date());
             return customerEntity;
         });
-        final CreateCustomerDto createCustomerDto = CreateCustomerDto.builder()
-                .id(UUID.randomUUID().toString())
-                .name(faker.name().firstName())
-                .surname(faker.name().lastName())
-                .email(faker.internet().emailAddress())
-                .phone(faker.phoneNumber().cellPhone())
-                .build();
+        final CreateCustomerDto createCustomerDto = customerTestUtils.generateMockCreateDto();
 
         final CustomerEntity customerEntity = customerService.add(createCustomerDto);
 
@@ -143,13 +119,8 @@ public class CustomerServiceTest {
     @Test
     void updateWithTakenEmailThrowsEmailTakenException() {
         final String id = "d145f0fa-f261-41d7-8c0d-f0bc43ffd805";
-        final UpdateCustomerDto updateCustomerDto = UpdateCustomerDto.builder()
-                .name(faker.name().firstName())
-                .surname(faker.name().lastName())
-                .email(faker.internet().emailAddress())
-                .phone(faker.phoneNumber().cellPhone())
-                .build();
-        when(customerRepository.findById(any(UUID.class))).thenReturn(Optional.of(exampleCustomer));
+        final UpdateCustomerDto updateCustomerDto = customerTestUtils.generateMockUpdateDto();
+        when(customerRepository.findById(any(UUID.class), any(EntityGraph.class))).thenReturn(Optional.of(exampleCustomer));
         when(customerRepository.existsByEmail(any(String.class))).thenReturn(true);
 
         final EmailTakenException exception = assertThrows(EmailTakenException.class, () ->
@@ -161,14 +132,9 @@ public class CustomerServiceTest {
     @Test
     void updateReturnsUpdatedCustomer() {
         final String id = "d145f0fa-f261-41d7-8c0d-f0bc43ffd805";
-        final UpdateCustomerDto updateCustomerDto = UpdateCustomerDto.builder()
-                .name(faker.name().firstName())
-                .surname(faker.name().lastName())
-                .email(faker.internet().emailAddress())
-                .phone(faker.phoneNumber().cellPhone())
-                .build();
+        final UpdateCustomerDto updateCustomerDto = customerTestUtils.generateMockUpdateDto();
         when(customerRepository.save(any(CustomerEntity.class))).thenAnswer(i -> i.getArgument(0));
-        when(customerRepository.findById(any(UUID.class))).thenReturn(Optional.of(exampleCustomer));
+        when(customerRepository.findById(any(UUID.class), any(EntityGraph.class))).thenReturn(Optional.of(exampleCustomer));
 
         final CustomerEntity updatedCustomer = customerService.update(id, updateCustomerDto);
 
@@ -181,12 +147,11 @@ public class CustomerServiceTest {
     @Test
     void deleteReturnsDeletedCustomer() {
         final String id = "d145f0fa-f261-41d7-8c0d-f0bc43ffd805";
-        when(customerRepository.findById(any(UUID.class))).thenReturn(Optional.of(exampleCustomer));
+        when(customerRepository.findById(any(UUID.class), any(EntityGraph.class))).thenReturn(Optional.of(exampleCustomer));
 
         final CustomerEntity deletedCustomer = customerService.deleteById(id);
 
         assertThat(deletedCustomer).isEqualTo(exampleCustomer);
     }
-
 
 }

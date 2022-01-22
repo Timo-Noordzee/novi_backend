@@ -1,13 +1,12 @@
 package com.timo_noordzee.novi.backend.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.javafaker.Faker;
 import com.jayway.jsonpath.JsonPath;
 import com.timo_noordzee.novi.backend.domain.Role;
 import com.timo_noordzee.novi.backend.dto.CreateEmployeeDto;
 import com.timo_noordzee.novi.backend.exception.EntityAlreadyExistsException;
 import com.timo_noordzee.novi.backend.exception.EntityNotFoundException;
-import com.timo_noordzee.novi.backend.service.EmployeeService;
+import com.timo_noordzee.novi.backend.util.EmployeeTestUtils;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Locale;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -32,31 +30,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class EmployeeIntegrationTest {
 
-    private final Faker faker = new Faker(new Locale("nl"));
+    private final EmployeeTestUtils employeeTestUtils = new EmployeeTestUtils();
 
     @Autowired
     private MockMvc mockMvc;
+
     @Autowired
     private ObjectMapper objectMapper;
-    @Autowired
-    private EmployeeService employeeService;
 
     @Test
     void injectedComponentsAreNotNull() {
         assertThat(mockMvc).isNotNull();
         assertThat(objectMapper).isNotNull();
-        assertThat(employeeService).isNotNull();
     }
 
     @Test
     void addEmployeeWorksThroughAllLayers() throws Exception {
-        final CreateEmployeeDto createEmployeeDto = CreateEmployeeDto.builder()
-                .name(faker.name().firstName())
-                .surname(faker.name().lastName())
-                .email(faker.internet().emailAddress())
-                .password(faker.internet().password())
-                .role(Role.MECHANIC.getValue())
-                .build();
+        final Role role = employeeTestUtils.randomRole();
+        final CreateEmployeeDto createEmployeeDto = employeeTestUtils.generateMockCreateDto(role);
 
         final MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/employees")
                         .contentType("application/json")
@@ -66,7 +57,7 @@ public class EmployeeIntegrationTest {
                 .andExpect(jsonPath("$.name", Is.is(createEmployeeDto.getName())))
                 .andExpect(jsonPath("$.surname", Is.is(createEmployeeDto.getSurname())))
                 .andExpect(jsonPath("$.email", Is.is(createEmployeeDto.getEmail())))
-                .andExpect(jsonPath("$.role", Is.is(Role.MECHANIC.getValue())))
+                .andExpect(jsonPath("$.role", Is.is(role.getValue())))
                 .andExpect(jsonPath("$.password").doesNotExist())
                 .andReturn();
 
@@ -79,7 +70,7 @@ public class EmployeeIntegrationTest {
                 .andExpect(jsonPath("$.name", Is.is(createEmployeeDto.getName())))
                 .andExpect(jsonPath("$.surname", Is.is(createEmployeeDto.getSurname())))
                 .andExpect(jsonPath("$.email", Is.is(createEmployeeDto.getEmail())))
-                .andExpect(jsonPath("$.role", Is.is(Role.MECHANIC.getValue())))
+                .andExpect(jsonPath("$.role", Is.is(role.getValue())))
                 .andExpect(jsonPath("$.password").doesNotExist());
     }
 
@@ -95,16 +86,7 @@ public class EmployeeIntegrationTest {
 
     @Test
     void addingExistingEmployeeThrowsEntityAlreadyExistsException() throws Exception {
-        final String id = UUID.randomUUID().toString();
-
-        final CreateEmployeeDto createEmployeeDto = CreateEmployeeDto.builder()
-                .id(id)
-                .name(faker.name().firstName())
-                .surname(faker.name().lastName())
-                .email(faker.internet().emailAddress())
-                .password(faker.internet().password())
-                .role(Role.MECHANIC.getValue())
-                .build();
+        final CreateEmployeeDto createEmployeeDto = employeeTestUtils.generateMockCreateDto();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/employees")
                         .contentType("application/json")

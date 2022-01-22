@@ -1,10 +1,10 @@
 package com.timo_noordzee.novi.backend.repository;
 
+import com.cosium.spring.data.jpa.entity.graph.repository.EntityGraphJpaRepository;
 import com.timo_noordzee.novi.backend.data.CustomerEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
 
-public interface CustomerRepository extends JpaRepository<CustomerEntity, UUID> {
+public interface CustomerRepository extends EntityGraphJpaRepository<CustomerEntity, UUID> {
     boolean existsByEmail(final String email);
 }

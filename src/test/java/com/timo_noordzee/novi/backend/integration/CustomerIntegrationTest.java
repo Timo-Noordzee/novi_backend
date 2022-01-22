@@ -1,12 +1,12 @@
 package com.timo_noordzee.novi.backend.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.javafaker.Faker;
 import com.jayway.jsonpath.JsonPath;
 import com.timo_noordzee.novi.backend.dto.CreateCustomerDto;
 import com.timo_noordzee.novi.backend.exception.EntityAlreadyExistsException;
 import com.timo_noordzee.novi.backend.exception.EntityNotFoundException;
 import com.timo_noordzee.novi.backend.service.CustomerService;
+import com.timo_noordzee.novi.backend.util.CustomerTestUtils;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Locale;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -31,12 +30,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class CustomerIntegrationTest {
 
-    private final Faker faker = new Faker(new Locale("nl"));
+    private final CustomerTestUtils customerTestUtils = new CustomerTestUtils();
 
     @Autowired
     private MockMvc mockMvc;
+
     @Autowired
     private ObjectMapper objectMapper;
+
     @Autowired
     private CustomerService customerService;
 
@@ -49,12 +50,7 @@ public class CustomerIntegrationTest {
 
     @Test
     void addCustomerWorksThroughAllLayers() throws Exception {
-        final CreateCustomerDto createCustomerDto = CreateCustomerDto.builder()
-                .name(faker.name().firstName())
-                .surname(faker.name().lastName())
-                .email(faker.internet().emailAddress())
-                .phone(faker.phoneNumber().phoneNumber())
-                .build();
+        final CreateCustomerDto createCustomerDto = customerTestUtils.generateMockCreateDto();
 
         final MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/customers")
                         .contentType("application/json")
@@ -93,15 +89,7 @@ public class CustomerIntegrationTest {
 
     @Test
     void addingExistingCustomerThrowsEntityAlreadyExistsException() throws Exception {
-        final String id = UUID.randomUUID().toString();
-
-        final CreateCustomerDto createCustomerDto = CreateCustomerDto.builder()
-                .id(id)
-                .name(faker.name().firstName())
-                .surname(faker.name().lastName())
-                .email(faker.internet().emailAddress())
-                .phone(faker.phoneNumber().phoneNumber())
-                .build();
+        final CreateCustomerDto createCustomerDto = customerTestUtils.generateMockCreateDto();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/customers")
                         .contentType("application/json")
