@@ -112,11 +112,11 @@
 			<version>3.12.0</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/com.github.javafaker/javafaker -->
+		<!-- https://mvnrepository.com/artifact/net.datafaker/datafaker -->
 		<dependency>
-			<groupId>com.github.javafaker</groupId>
-			<artifactId>javafaker</artifactId>
-			<version>1.0.2</version>
+			<groupId>net.datafaker</groupId>
+			<artifactId>datafaker</artifactId>
+			<version>1.0.0</version>
 			<scope>test</scope>
 		</dependency>
 
