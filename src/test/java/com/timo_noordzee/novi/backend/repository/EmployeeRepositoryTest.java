@@ -1,6 +1,6 @@
 package com.timo_noordzee.novi.backend.repository;
 
-import com.timo_noordzee.novi.backend.config.EntityGraphJpaRepository;
+import com.timo_noordzee.novi.backend.config.EntityGraphJpaRepositoryConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -13,7 +13,7 @@ import javax.sql.DataSource;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@Import(EntityGraphJpaRepository.class)
+@Import(EntityGraphJpaRepositoryConfiguration.class)
 public class EmployeeRepositoryTest {
 
     @Autowired

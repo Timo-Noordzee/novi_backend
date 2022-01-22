@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,14 +19,15 @@ import java.util.Date;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "vin")
 @NamedEntityGraphs(value = {
         @NamedEntityGraph(name = VehicleEntity.GRAPH_DEFAULT),
-        @NamedEntityGraph(name = VehicleEntity.GRAPH_WITH_OWNER, attributeNodes = {
-                @NamedAttributeNode("owner")
+        @NamedEntityGraph(name = VehicleEntity.GRAPH_FULL_DETAILS, attributeNodes = {
+                @NamedAttributeNode("owner"),
+                @NamedAttributeNode("shortcomings"),
         })
 })
 public class VehicleEntity {
 
     public static final String GRAPH_DEFAULT = "Vehicle.default";
-    public static final String GRAPH_WITH_OWNER = "Vehicle.owner";
+    public static final String GRAPH_FULL_DETAILS = "Vehicle.detailed";
 
     @Id
     @Column(name = "vin", unique = true)
@@ -51,5 +53,9 @@ public class VehicleEntity {
     @JoinColumn(name = "customer_id")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private CustomerEntity owner;
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @OneToMany(mappedBy = "vehicle", orphanRemoval = true)
+    private List<ShortcomingEntity> shortcomings;
 
 }
