@@ -148,7 +148,7 @@ medewerkers vallen binnen de klasse `Employee`.
 |---------------------------|----------------------------------------|
 | administratief medewerker | object van klasse Employee             |
 | auto                      | object van klasse Vehicle              |
-| autopapieren              | implementatieaspect                    |
+| autopapieren              | vervangen door klasse VehiclePapers    |
 | backoffice medewerker     | object van klasse Employee             |
 | bedrag                    | attribuut                              |
 | factuur                   | vervangen door klasse Invoice          |
@@ -178,17 +178,18 @@ medewerkers vallen binnen de klasse `Employee`.
 Nu voor elke kandidaat klasse een blissing is genomen is duidelijke welke klassen onderdeel gaan uitmaken van het
 klassendiagram.
 
-| **Klasse**  | **Omschrijving**                                                                                                                         |
-|-------------|------------------------------------------------------------------------------------------------------------------------------------------|
-| Customer    | Een fysiek persoon die ooit een overeenkomst aangegaan is met de garage door bijvoorbeeld het laten keuren of repareren van een voertuig |
-| Employee    | Een werknemer van de garage. Elke werknemer heeft een eigen rol, bijvoorbeeld administratief medewerker of monteur                       |
-| Action      | Een handeling die door een monteur uitgevoerd kan worden zoals bijvoorbeeld het vervangen van een remschijf                              |
-| Part        | Een onderdeel van een voertuig die door een monteur vervangen zou kunnen worden zoals een remschijf                                      |
-| Repair      | Een verzameling van alle door de monteur verrichte handelingen en vervangen onderdelen                                                   |
-| RepairLine  | Eén losse regel om een handeling of onderdeel te representeren. De regel is altijd gekoppeld aan een reparatie                           |
-| Invoice     | Een factuur waarop de verschillende verrichte handelingen en vervangen onderdelen staan. Op de factuur staat ook het BTW tarief vermeld  |
-| Shortcoming | Een beschrijving van een door een monteur gevonden tekortkoming aan een voertuig, zoals kapotte lampen of een versleten remblok          |
-| Vehicle     | Een object dat een voertuig van een klant representeert, bijvoorbeeld een auto of motor                                                  |                                                                                                                             |
+| **Klasse**    | **Omschrijving**                                                                                                                         |
+|---------------|------------------------------------------------------------------------------------------------------------------------------------------|
+| Customer      | Een fysiek persoon die ooit een overeenkomst aangegaan is met de garage door bijvoorbeeld het laten keuren of repareren van een voertuig |
+| Employee      | Een werknemer van de garage. Elke werknemer heeft een eigen rol, bijvoorbeeld administratief medewerker of monteur                       |
+| Action        | Een handeling die door een monteur uitgevoerd kan worden zoals bijvoorbeeld het vervangen van een remschijf                              |
+| Part          | Een onderdeel van een voertuig die door een monteur vervangen zou kunnen worden zoals een remschijf                                      |
+| Repair        | Een verzameling van alle door de monteur verrichte handelingen en vervangen onderdelen                                                   |
+| RepairLine    | Eén losse regel om een handeling of onderdeel te representeren. De regel is altijd gekoppeld aan een reparatie                           |
+| Invoice       | Een factuur waarop de verschillende verrichte handelingen en vervangen onderdelen staan. Op de factuur staat ook het BTW tarief vermeld  |
+| Shortcoming   | Een beschrijving van een door een monteur gevonden tekortkoming aan een voertuig, zoals kapotte lampen of een versleten remblok          |
+| Vehicle       | Een object dat een voertuig van een klant representeert, bijvoorbeeld een auto of motor                                                  |
+| VehiclePapers | Een pdf bestand met daarin informatie over een voertuig                                                                                  |
 
 ### 3.3 UML Klassendiagram
 
