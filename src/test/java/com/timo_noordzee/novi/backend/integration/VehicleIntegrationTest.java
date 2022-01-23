@@ -3,12 +3,15 @@ package com.timo_noordzee.novi.backend.integration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.timo_noordzee.novi.backend.data.CustomerEntity;
+import com.timo_noordzee.novi.backend.data.ShortcomingEntity;
 import com.timo_noordzee.novi.backend.data.VehicleEntity;
 import com.timo_noordzee.novi.backend.dto.CreateVehicleDto;
 import com.timo_noordzee.novi.backend.dto.UpdateVehicleDto;
 import com.timo_noordzee.novi.backend.repository.CustomerRepository;
+import com.timo_noordzee.novi.backend.repository.ShortcomingRepository;
 import com.timo_noordzee.novi.backend.repository.VehicleRepository;
 import com.timo_noordzee.novi.backend.util.CustomerTestUtils;
+import com.timo_noordzee.novi.backend.util.ShortcomingTestUtils;
 import com.timo_noordzee.novi.backend.util.VehicleTestUtils;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
@@ -34,6 +37,7 @@ public class VehicleIntegrationTest {
 
     private final CustomerTestUtils customerTestUtils = new CustomerTestUtils();
     private final VehicleTestUtils vehicleTestUtils = new VehicleTestUtils();
+    private final ShortcomingTestUtils shortcomingTestUtils = new ShortcomingTestUtils();
 
     @Autowired
     private MockMvc mockMvc;
@@ -47,11 +51,16 @@ public class VehicleIntegrationTest {
     @Autowired
     private VehicleRepository vehicleRepository;
 
+    @Autowired
+    private ShortcomingRepository shortcomingRepository;
+
     @Test
     void injectedComponentsAreNotNull() {
         assertThat(mockMvc).isNotNull();
         assertThat(objectMapper).isNotNull();
         assertThat(customerRepository).isNotNull();
+        assertThat(vehicleRepository).isNotNull();
+        assertThat(shortcomingRepository).isNotNull();
     }
 
     @Test
@@ -111,8 +120,7 @@ public class VehicleIntegrationTest {
                 .andExpect(jsonPath("$.owner.email", Is.is(customerEntity2.getEmail())))
                 .andExpect(jsonPath("$.owner.phone", Is.is(customerEntity2.getPhone())))
                 .andExpect(jsonPath("$.owner.name", Is.is(customerEntity2.getName())))
-                .andExpect(jsonPath("$.owner.surname", Is.is(customerEntity2.getSurname())))
-                .andReturn();
+                .andExpect(jsonPath("$.owner.surname", Is.is(customerEntity2.getSurname())));
     }
 
     @Test
@@ -152,6 +160,36 @@ public class VehicleIntegrationTest {
                 .andExpect(jsonPath("$.make", Is.is(vehicleEntity.getMake())))
                 .andExpect(jsonPath("$.year", Is.is(vehicleEntity.getYear())))
                 .andExpect(jsonPath("$.owner.id", Is.is(customerEntity.getId().toString())));
+    }
+
+    @Test
+    void getByIdWorksThroughAllLayers() throws Exception {
+        final CustomerEntity customerEntity = customerTestUtils.generateMockEntity();
+        customerRepository.save(customerEntity);
+        final VehicleEntity vehicleEntity = vehicleTestUtils.generateMockEntity(customerEntity);
+        vehicleRepository.save(vehicleEntity);
+        final ShortcomingEntity shortcomingEntity1 = shortcomingTestUtils.generateMockEntity(vehicleEntity);
+        final ShortcomingEntity shortcomingEntity2 = shortcomingTestUtils.generateMockEntity(vehicleEntity);
+        shortcomingRepository.save(shortcomingEntity1);
+        shortcomingRepository.save(shortcomingEntity2);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/vehicles/{id}", vehicleEntity.getVin()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.vin", Is.is(vehicleEntity.getVin())))
+                .andExpect(jsonPath("$.license", Is.is(vehicleEntity.getLicense())))
+                .andExpect(jsonPath("$.brand", Is.is(vehicleEntity.getBrand())))
+                .andExpect(jsonPath("$.make", Is.is(vehicleEntity.getMake())))
+                .andExpect(jsonPath("$.year", Is.is(vehicleEntity.getYear())))
+                .andExpect(jsonPath("$.owner.id", Is.is(customerEntity.getId().toString())))
+                .andExpect(jsonPath("$.owner.vehicles").doesNotExist())
+                .andExpect(jsonPath("$.shortcomings", hasSize(2)))
+                .andExpect(jsonPath("$.shortcomings[0].id", Is.is(shortcomingEntity1.getId().toString())))
+                .andExpect(jsonPath("$.shortcomings[0].description", Is.is(shortcomingEntity1.getDescription())))
+                .andExpect(jsonPath("$.shortcomings[0].vehicle", Is.is(vehicleEntity.getVin())))
+                .andExpect(jsonPath("$.shortcomings[1].id", Is.is(shortcomingEntity2.getId().toString())))
+                .andExpect(jsonPath("$.shortcomings[1].description", Is.is(shortcomingEntity2.getDescription())))
+                .andExpect(jsonPath("$.shortcomings[1].vehicle", Is.is(vehicleEntity.getVin())));
     }
 
 }
