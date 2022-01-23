@@ -1,13 +1,17 @@
 package com.timo_noordzee.novi.backend.controller;
 
 import com.timo_noordzee.novi.backend.data.VehicleEntity;
+import com.timo_noordzee.novi.backend.data.VehiclePapersEntity;
 import com.timo_noordzee.novi.backend.dto.CreateVehicleDto;
 import com.timo_noordzee.novi.backend.dto.UpdateVehicleDto;
+import com.timo_noordzee.novi.backend.service.VehiclePapersService;
 import com.timo_noordzee.novi.backend.service.VehicleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -18,6 +22,7 @@ import java.util.List;
 public class VehicleController {
 
     private final VehicleService vehicleService;
+    private final VehiclePapersService vehiclePapersService;
 
     @GetMapping("")
     public List<VehicleEntity> getAll() {
@@ -48,6 +53,21 @@ public class VehicleController {
     @DeleteMapping("/{id}")
     public VehicleEntity deleteById(@PathVariable("id") final String id) {
         return vehicleService.deleteById(id);
+    }
+
+    @PostMapping("/{id}/papers")
+    public VehiclePapersEntity addVehiclePapers(
+            @PathVariable("id") final String id,
+            @RequestParam("file") final MultipartFile file
+    ) {
+        return vehiclePapersService.add(id, file);
+    }
+
+    @GetMapping("/{id}/papers")
+    public List<VehiclePapersEntity> getPapersForVehicle(
+            @PathVariable final String id
+    ) {
+        return vehiclePapersService.findAllForVehicle(id);
     }
 
 }
