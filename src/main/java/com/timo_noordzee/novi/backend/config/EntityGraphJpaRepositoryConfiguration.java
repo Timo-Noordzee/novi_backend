@@ -9,5 +9,5 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
         repositoryFactoryBeanClass = EntityGraphJpaRepositoryFactoryBean.class,
         basePackages = "com.timo_noordzee.novi.backend.repository"
 )
-public class EntityGraphJpaRepository {
+public class EntityGraphJpaRepositoryConfiguration {
 }

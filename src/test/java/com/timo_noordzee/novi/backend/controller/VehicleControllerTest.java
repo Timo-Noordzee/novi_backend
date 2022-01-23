@@ -44,7 +44,6 @@ public class VehicleControllerTest {
     private final VehicleTestUtils vehicleTestUtils = new VehicleTestUtils();
     private final CustomerTestUtils customerTestUtils = new CustomerTestUtils();
 
-
     @Test
     void getAllReturnsArrayOfVehicles() throws Exception {
         final List<VehicleEntity> vehicleEntityList = new ArrayList<>();

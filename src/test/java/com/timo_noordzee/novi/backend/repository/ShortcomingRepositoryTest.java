@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @Import(EntityGraphJpaRepositoryConfiguration.class)
-public class VehicleRepositoryTest {
+public class ShortcomingRepositoryTest {
 
     @Autowired
     private DataSource dataSource;
@@ -23,14 +23,14 @@ public class VehicleRepositoryTest {
     @Autowired
     private EntityManager entityManager;
     @Autowired
-    private VehicleRepository vehicleRepository;
+    private ShortcomingRepository shortcomingRepository;
 
     @Test
     void injectedComponentsAreNotNull() {
         assertThat(dataSource).isNotNull();
         assertThat(jdbcTemplate).isNotNull();
         assertThat(entityManager).isNotNull();
-        assertThat(vehicleRepository).isNotNull();
+        assertThat(shortcomingRepository).isNotNull();
     }
 
 }

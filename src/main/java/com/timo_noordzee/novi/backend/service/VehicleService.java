@@ -35,7 +35,7 @@ public class VehicleService extends BaseRestService<VehicleEntity, String, Creat
 
     @Override
     protected Optional<VehicleEntity> findById(final String s) {
-        return repository.findById(s, EntityGraphs.named(VehicleEntity.GRAPH_WITH_OWNER));
+        return repository.findById(s, EntityGraphs.named(VehicleEntity.GRAPH_FULL_DETAILS));
     }
 
     @Override
