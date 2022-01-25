@@ -3,23 +3,30 @@ package com.timo_noordzee.novi.backend.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.timo_noordzee.novi.backend.data.CustomerEntity;
 import com.timo_noordzee.novi.backend.data.VehicleEntity;
+import com.timo_noordzee.novi.backend.data.VehiclePapersEntity;
 import com.timo_noordzee.novi.backend.dto.CreateVehicleDto;
 import com.timo_noordzee.novi.backend.dto.UpdateVehicleDto;
 import com.timo_noordzee.novi.backend.exception.EntityNotFoundException;
+import com.timo_noordzee.novi.backend.exception.ForbiddenFileTypeException;
 import com.timo_noordzee.novi.backend.exception.LicenseTakenException;
+import com.timo_noordzee.novi.backend.service.VehiclePapersService;
 import com.timo_noordzee.novi.backend.service.VehicleService;
 import com.timo_noordzee.novi.backend.util.CustomerTestUtils;
+import com.timo_noordzee.novi.backend.util.VehiclePapersTestUtils;
 import com.timo_noordzee.novi.backend.util.VehicleTestUtils;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,8 +48,12 @@ public class VehicleControllerTest {
     @MockBean
     private VehicleService vehicleService;
 
+    @MockBean
+    private VehiclePapersService vehiclePapersService;
+
     private final VehicleTestUtils vehicleTestUtils = new VehicleTestUtils();
     private final CustomerTestUtils customerTestUtils = new CustomerTestUtils();
+    private final VehiclePapersTestUtils vehiclePapersTestUtils = new VehiclePapersTestUtils();
 
     @Test
     void getAllReturnsArrayOfVehicles() throws Exception {
@@ -150,6 +161,70 @@ public class VehicleControllerTest {
 
         resultActions.andExpect(status().isOk());
         assertResultMatchesEntity(resultActions, vehicleEntity);
+    }
+
+    @Test
+    void addingVehiclePapersWithInvalidContentTypeReturnsForbiddenFileTypeException() throws Exception {
+        final MockMultipartFile multipartFile = vehiclePapersTestUtils.generateMockMultipartFile("application/png");
+        final VehicleEntity vehicleEntity = vehicleTestUtils.generateMockEntity();
+        when(vehiclePapersService.add(any(String.class), any(MultipartFile.class))).thenThrow(new ForbiddenFileTypeException("application/png"));
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/vehicles/{id}/papers", vehicleEntity.getVin())
+                        .file(multipartFile))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode", Is.is(ForbiddenFileTypeException.ERROR_CODE)));
+    }
+
+    @Test
+    void addingVehiclePapersForNonexistentVehicleReturnsEntityNotFoundException() throws Exception {
+        final String vehicleId = vehicleTestUtils.randomVin();
+        when(vehiclePapersService.add(any(String.class), any(MultipartFile.class)))
+                .thenThrow(new EntityNotFoundException(vehicleId, VehicleEntity.class.getSimpleName()));
+        final MockMultipartFile multipartFile = vehiclePapersTestUtils.generateMockMultipartFile("application/pdf");
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/vehicles/{id}/papers", vehicleId)
+                        .file(multipartFile))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.errorCode", Is.is(EntityNotFoundException.ERROR_CODE)));
+    }
+
+    @Test
+    void addingValidVehiclePapersToExistingVehicleReturnsVehiclePapersEntity() throws Exception {
+        final VehicleEntity vehicleEntity = vehicleTestUtils.generateMockEntity();
+        final VehiclePapersEntity vehiclePapersEntity = vehiclePapersTestUtils.generateMockEntity(vehicleEntity);
+        final MockMultipartFile multipartFile = vehiclePapersTestUtils.generateMockMultipartFile("application/pdf");
+        when(vehiclePapersService.add(any(String.class), any(MultipartFile.class))).thenReturn(vehiclePapersEntity);
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/vehicles/{id}/papers", vehicleEntity.getVin())
+                        .file(multipartFile))
+                .andExpect(jsonPath("$.id", Is.is(vehiclePapersEntity.getId().toString())))
+                .andExpect(jsonPath("$.name", Is.is(vehiclePapersEntity.getName())))
+                .andExpect(jsonPath("$.type", Is.is(vehiclePapersEntity.getType())))
+                .andExpect(jsonPath("$.data", Is.is(Base64.getEncoder().encodeToString(vehiclePapersEntity.getData()))))
+                .andExpect(jsonPath("$.vehicle.vin", Is.is(vehiclePapersEntity.getVehicle().getVin())));
+    }
+
+    @Test
+    void getPapersForVehicleReturnsListOfVehiclePapersEntityWithoutDataField() throws Exception {
+        final VehicleEntity vehicleEntity = vehicleTestUtils.generateMockEntity();
+        final List<VehiclePapersEntity> vehicleEntityList = new ArrayList<>();
+        vehicleEntityList.add(vehiclePapersTestUtils.generateMockEntityWithoutData());
+        vehicleEntityList.add(vehiclePapersTestUtils.generateMockEntityWithoutData());
+        when(vehiclePapersService.findAllForVehicle(any(String.class))).thenReturn(vehicleEntityList);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/vehicles/{id}/papers", vehicleEntity.getVin()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id", Is.is(vehicleEntityList.get(0).getId().toString())))
+                .andExpect(jsonPath("$[0].name", Is.is(vehicleEntityList.get(0).getName())))
+                .andExpect(jsonPath("$[0].type", Is.is(vehicleEntityList.get(0).getType())))
+                .andExpect(jsonPath("$[0].data").doesNotExist())
+                .andExpect(jsonPath("$[0].vehicle").doesNotExist())
+                .andExpect(jsonPath("$[1].id", Is.is(vehicleEntityList.get(1).getId().toString())))
+                .andExpect(jsonPath("$[1].name", Is.is(vehicleEntityList.get(1).getName())))
+                .andExpect(jsonPath("$[1].type", Is.is(vehicleEntityList.get(1).getType())))
+                .andExpect(jsonPath("$[1].data").doesNotExist())
+                .andExpect(jsonPath("$[1].vehicle").doesNotExist());
     }
 
     private void assertResultMatchesEntity(
