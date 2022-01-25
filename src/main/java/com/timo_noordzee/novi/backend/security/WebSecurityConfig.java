@@ -20,7 +20,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/vehicles/**").permitAll()
                 .antMatchers("/shortcomings/**").permitAll()
                 .antMatchers("/vehiclePapers/**").permitAll()
-                .antMatchers("/parts/**").permitAll();
+                .antMatchers("/parts/**").permitAll()
+                .antMatchers("/actions/**").permitAll();
 
         super.configure(http);
     }
