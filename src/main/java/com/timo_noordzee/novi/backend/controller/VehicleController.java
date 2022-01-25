@@ -56,11 +56,12 @@ public class VehicleController {
     }
 
     @PostMapping("/{id}/papers")
-    public VehiclePapersEntity addVehiclePapers(
+    public ResponseEntity<VehiclePapersEntity> addVehiclePapers(
             @PathVariable("id") final String id,
             @RequestParam("file") final MultipartFile file
     ) {
-        return vehiclePapersService.add(id, file);
+        final VehiclePapersEntity vehiclePapersEntity = vehiclePapersService.add(id, file);
+        return ResponseEntity.status(HttpStatus.CREATED).body(vehiclePapersEntity);
     }
 
     @GetMapping("/{id}/papers")

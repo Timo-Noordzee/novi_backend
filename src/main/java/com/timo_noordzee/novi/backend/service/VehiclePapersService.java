@@ -2,13 +2,14 @@ package com.timo_noordzee.novi.backend.service;
 
 import com.timo_noordzee.novi.backend.data.VehicleEntity;
 import com.timo_noordzee.novi.backend.data.VehiclePapersEntity;
-import com.timo_noordzee.novi.backend.domain.VehiclePapersWithoutData;
+import com.timo_noordzee.novi.backend.projection.VehiclePapersWithoutDataProjection;
 import com.timo_noordzee.novi.backend.dto.CreateVehiclePapersDto;
 import com.timo_noordzee.novi.backend.dto.UpdateVehiclePapersDto;
 import com.timo_noordzee.novi.backend.exception.FileUploadException;
 import com.timo_noordzee.novi.backend.exception.ForbiddenFileTypeException;
 import com.timo_noordzee.novi.backend.mapper.VehiclePapersMapper;
 import com.timo_noordzee.novi.backend.repository.VehiclePapersRepository;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,11 @@ public class VehiclePapersService extends BaseRestService<VehiclePapersEntity, U
     }
 
     public VehiclePapersEntity add(final String vehicleId, final MultipartFile multipartFile) {
+        final String fileType = multipartFile.getContentType();
+        if (!StringUtils.equals(fileType, MediaType.APPLICATION_PDF_VALUE)) {
+            throw new ForbiddenFileTypeException(fileType);
+        }
+
         try {
             final String originalFilename = multipartFile.getOriginalFilename();
             assert originalFilename != null;
@@ -37,7 +43,7 @@ public class VehiclePapersService extends BaseRestService<VehiclePapersEntity, U
             final String fileName = originalFilename.substring(startIndex + 1);
             final CreateVehiclePapersDto createVehiclePapersDto = CreateVehiclePapersDto.builder()
                     .name(fileName)
-                    .type(multipartFile.getContentType())
+                    .type(fileType)
                     .data(multipartFile.getBytes())
                     .vehicleId(vehicleId)
                     .build();
@@ -47,34 +53,25 @@ public class VehiclePapersService extends BaseRestService<VehiclePapersEntity, U
         }
     }
 
-    private List<VehiclePapersEntity> convertProjectionToEntity(final List<VehiclePapersWithoutData> papersWithoutData) {
-        return papersWithoutData.stream()
-                .map(vehiclePapersWithoutData -> VehiclePapersEntity.builder()
-                        .id(vehiclePapersWithoutData.getId())
-                        .name(vehiclePapersWithoutData.getName())
-                        .type(vehiclePapersWithoutData.getType())
-                        .uploadedAt(vehiclePapersWithoutData.getUploadedAt())
-                        .build())
-                .collect(Collectors.toList());
+    private VehiclePapersEntity convertProjectionToEntity(final VehiclePapersWithoutDataProjection projection) {
+        return VehiclePapersEntity.builder()
+                .id(projection.getId())
+                .name(projection.getName())
+                .type(projection.getType())
+                .uploadedAt(projection.getUploadedAt())
+                .build();
     }
 
     public List<VehiclePapersEntity> findAllForVehicle(final String vin) {
         final VehicleEntity vehicleEntity = vehicleService.getById(vin);
-        return convertProjectionToEntity(repository.findAllByVehicle(vehicleEntity));
-    }
-
-    @Override
-    protected void validateCreateConstrains(final CreateVehiclePapersDto createDto) {
-        final String fileType = createDto.getType();
-        if (!StringUtils.equals(fileType, MediaType.APPLICATION_PDF_VALUE)) {
-            throw new ForbiddenFileTypeException(fileType);
-        }
-        super.validateCreateConstrains(createDto);
+        return repository.findAllByVehicle(vehicleEntity).stream()
+                .map(this::convertProjectionToEntity)
+                .collect(Collectors.toList());
     }
 
     @Override
     protected List<VehiclePapersEntity> findAll() {
-        return convertProjectionToEntity(repository.findAllProjectedBy());
+        return repository.findAllProjectedBy().stream().map(this::convertProjectionToEntity).collect(Collectors.toList());
     }
 
     @Override
@@ -83,6 +80,11 @@ public class VehiclePapersService extends BaseRestService<VehiclePapersEntity, U
         final VehiclePapersEntity vehiclePapersEntity = mapper.fromCreateDto(createDto);
         vehiclePapersEntity.setVehicle(vehicleEntity);
         return vehiclePapersEntity;
+    }
+
+    @Override
+    public VehiclePapersEntity update(final String id, final UpdateVehiclePapersDto updateDto) {
+        throw new NotImplementedException();
     }
 
     @Override

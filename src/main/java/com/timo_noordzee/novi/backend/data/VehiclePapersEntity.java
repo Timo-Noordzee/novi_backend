@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -36,6 +37,7 @@ public class VehiclePapersEntity {
 
     @Lob
     @Column(name = "data")
+    @Type(type="org.hibernate.type.BinaryType")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private byte[] data;
 
