@@ -153,5 +153,4 @@ public class ShortcomingServiceTest {
         assertThat(deletedShortcomingEntity.getVehicle()).isEqualTo(shortcomingEntity.getVehicle());
     }
 
-
 }

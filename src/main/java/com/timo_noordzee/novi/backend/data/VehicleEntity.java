@@ -62,4 +62,8 @@ public class VehicleEntity {
     @OneToMany(mappedBy = "vehicle", orphanRemoval = true)
     private List<VehiclePapersEntity> papers;
 
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @OneToMany(mappedBy = "vehicle", orphanRemoval = true)
+    private List<RepairEntity> vehicles;
+
 }
