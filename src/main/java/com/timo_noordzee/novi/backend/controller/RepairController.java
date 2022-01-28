@@ -1,8 +1,11 @@
 package com.timo_noordzee.novi.backend.controller;
 
 import com.timo_noordzee.novi.backend.data.RepairEntity;
+import com.timo_noordzee.novi.backend.data.RepairLineEntity;
+import com.timo_noordzee.novi.backend.dto.AddRepairLinesDto;
 import com.timo_noordzee.novi.backend.dto.CreateRepairDto;
 import com.timo_noordzee.novi.backend.dto.UpdateRepairDto;
+import com.timo_noordzee.novi.backend.dto.UpdateRepairLineDto;
 import com.timo_noordzee.novi.backend.service.RepairService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -48,6 +51,32 @@ public class RepairController {
     @DeleteMapping("/{id}")
     public RepairEntity deleteById(@PathVariable("id") final String id) {
         return repairService.deleteById(id);
+    }
+
+    @PostMapping("/{id}/lines")
+    public RepairEntity addLinesToRepair(
+            @PathVariable("id") final String id,
+            @Valid @RequestBody final AddRepairLinesDto addRepairLinesDto
+    ) {
+        repairService.addLinesToRepair(id, addRepairLinesDto);
+        return repairService.getById(id);
+    }
+
+    @PutMapping("/{id}/lines/{lineId}")
+    public RepairLineEntity updateRepairLine(
+            @PathVariable("id") final String id,
+            @PathVariable("lineId") final String lineId,
+            @Valid @RequestBody final UpdateRepairLineDto updateRepairLineDto
+    ) {
+        return repairService.updateRepairLine(id, lineId, updateRepairLineDto);
+    }
+
+    @DeleteMapping("/{id}/lines/{lineId}")
+    public RepairLineEntity updateRepairLine(
+            @PathVariable("id") final String id,
+            @PathVariable("lineId") final String lineId
+    ) {
+        return repairService.deleteRepairLine(id, lineId);
     }
 
 }

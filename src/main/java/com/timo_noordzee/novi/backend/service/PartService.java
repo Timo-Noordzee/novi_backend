@@ -25,4 +25,8 @@ public class PartService extends BaseRestService<PartEntity, UUID, CreatePartDto
     String entityType() {
         return PartEntity.class.getSimpleName();
     }
+
+    public void decrementStock(final UUID id, final int amount) {
+        repository.decrementStock(id, amount);
+    }
 }

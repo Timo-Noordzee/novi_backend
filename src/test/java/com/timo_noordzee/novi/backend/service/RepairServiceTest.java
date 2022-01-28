@@ -8,12 +8,8 @@ import com.timo_noordzee.novi.backend.dto.CreateRepairDto;
 import com.timo_noordzee.novi.backend.dto.UpdateRepairDto;
 import com.timo_noordzee.novi.backend.exception.EntityNotFoundException;
 import com.timo_noordzee.novi.backend.exception.InvalidUUIDException;
-import com.timo_noordzee.novi.backend.mapper.CustomerMapper;
-import com.timo_noordzee.novi.backend.mapper.RepairMapper;
-import com.timo_noordzee.novi.backend.mapper.VehicleMapper;
-import com.timo_noordzee.novi.backend.repository.CustomerRepository;
-import com.timo_noordzee.novi.backend.repository.RepairRepository;
-import com.timo_noordzee.novi.backend.repository.VehicleRepository;
+import com.timo_noordzee.novi.backend.mapper.*;
+import com.timo_noordzee.novi.backend.repository.*;
 import com.timo_noordzee.novi.backend.util.CustomerTestUtils;
 import com.timo_noordzee.novi.backend.util.RepairTestUtils;
 import com.timo_noordzee.novi.backend.util.VehicleTestUtils;
@@ -45,6 +41,15 @@ public class RepairServiceTest {
     @Mock
     private RepairRepository repairRepository;
 
+    @Mock
+    private PartRepository partRepository;
+
+    @Mock
+    private ActionRepository actionRepository;
+
+    @Mock
+    private RepairLineRepository repairLineRepository;
+
     private RepairService repairService;
 
     private final CustomerTestUtils customerTestUtils = new CustomerTestUtils();
@@ -55,10 +60,15 @@ public class RepairServiceTest {
     void setUp() {
         final CustomerMapper customerMapper = Mappers.getMapper(CustomerMapper.class);
         final VehicleMapper vehicleMapper = Mappers.getMapper(VehicleMapper.class);
+        final PartMapper partMapper = Mappers.getMapper(PartMapper.class);
+        final ActionMapper actionMapper = Mappers.getMapper(ActionMapper.class);
         final RepairMapper repairMapper = Mappers.getMapper(RepairMapper.class);
+        final RepairLineMapper repairLineMapper = Mappers.getMapper(RepairLineMapper.class);
         final CustomerService customerService = new CustomerService(customerRepository, customerMapper);
         final VehicleService vehicleService = new VehicleService(vehicleRepository, vehicleMapper, customerService);
-        repairService = new RepairService(repairRepository, repairMapper, vehicleService);
+        final PartService partService = new PartService(partRepository, partMapper);
+        final ActionService actionService = new ActionService(actionRepository, actionMapper);
+        repairService = new RepairService(repairRepository, repairMapper, vehicleService, partService, actionService, repairLineRepository, repairLineMapper);
     }
 
     @Test
