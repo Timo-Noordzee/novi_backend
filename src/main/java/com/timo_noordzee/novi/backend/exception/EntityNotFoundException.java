@@ -13,4 +13,12 @@ public class EntityNotFoundException extends BaseHttpException {
                 String.format("entity of type %s with id %s doesn't exist", entityType, id)
         );
     }
+
+    public EntityNotFoundException(final String parentId, final String parentEntityType, final String id, final String entityType) {
+        super(
+                ERROR_CODE,
+                HttpStatus.NOT_FOUND,
+                String.format("entity of type %s with id %s doesn't exist for parent entity of type %s with id %s", entityType, id, parentEntityType, parentId)
+        );
+    }
 }

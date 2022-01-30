@@ -7,6 +7,7 @@ import com.timo_noordzee.novi.backend.dto.CreateRepairDto;
 import com.timo_noordzee.novi.backend.dto.UpdateRepairDto;
 import net.datafaker.Faker;
 
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Random;
 import java.util.UUID;
@@ -21,8 +22,8 @@ public class RepairTestUtils {
     }
 
     public RepairStatus randomRepairStatus() {
-        final int roleIndex = new Random().nextInt(RepairStatus.values().length);
-        return RepairStatus.values()[roleIndex];
+        final int index = new Random().nextInt(RepairStatus.values().length);
+        return RepairStatus.values()[index];
     }
 
     public RepairEntity generateMockEntity() {
@@ -36,6 +37,7 @@ public class RepairTestUtils {
                 .status(randomRepairStatus())
                 .createdAt(faker.date().past(10, TimeUnit.DAYS))
                 .vehicle(vehicleEntity)
+                .lines(new ArrayList<>())
                 .build();
     }
 
