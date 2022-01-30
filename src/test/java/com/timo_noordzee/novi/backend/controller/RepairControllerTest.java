@@ -3,12 +3,15 @@ package com.timo_noordzee.novi.backend.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.timo_noordzee.novi.backend.data.CustomerEntity;
 import com.timo_noordzee.novi.backend.data.RepairEntity;
+import com.timo_noordzee.novi.backend.data.RepairLineEntity;
 import com.timo_noordzee.novi.backend.data.VehicleEntity;
+import com.timo_noordzee.novi.backend.dto.AddRepairLinesDto;
 import com.timo_noordzee.novi.backend.dto.CreateRepairDto;
 import com.timo_noordzee.novi.backend.dto.UpdateRepairDto;
 import com.timo_noordzee.novi.backend.exception.EntityNotFoundException;
 import com.timo_noordzee.novi.backend.service.RepairService;
 import com.timo_noordzee.novi.backend.util.CustomerTestUtils;
+import com.timo_noordzee.novi.backend.util.RepairLineTestUtils;
 import com.timo_noordzee.novi.backend.util.RepairTestUtils;
 import com.timo_noordzee.novi.backend.util.VehicleTestUtils;
 import org.hamcrest.core.Is;
@@ -20,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,6 +48,7 @@ public class RepairControllerTest {
     private final VehicleTestUtils vehicleTestUtils = new VehicleTestUtils();
     private final CustomerTestUtils customerTestUtils = new CustomerTestUtils();
     private final RepairTestUtils repairTestUtils = new RepairTestUtils();
+    private final RepairLineTestUtils repairLineTestUtils = new RepairLineTestUtils();
 
     @Test
     void getAllReturnsListOfRepairs() throws Exception {
@@ -78,9 +83,13 @@ public class RepairControllerTest {
     }
 
     @Test
-    void getByIdOnExistingRepairReturnsRepairWithVehicle() throws Exception {
+    void getByIdOnExistingRepairReturnsRepairWithVehicleAndRepairLines() throws Exception {
         final VehicleEntity vehicleEntity = vehicleTestUtils.generateMockEntity();
         final RepairEntity repairEntity = repairTestUtils.generateMockEntity(vehicleEntity);
+        final RepairLineEntity repairLineEntity1 = repairLineTestUtils.generateMockEntity(repairEntity);
+        final RepairLineEntity repairLineEntity2 = repairLineTestUtils.generateMockEntity(repairEntity);
+        repairEntity.setLines(Arrays.asList(repairLineEntity1, repairLineEntity2));
+
         when(repairService.getById(any(String.class))).thenReturn(repairEntity);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/repairs/{id}", repairEntity.getId().toString()))
@@ -93,7 +102,17 @@ public class RepairControllerTest {
                 .andExpect(jsonPath("$.vehicle.brand", Is.is(repairEntity.getVehicle().getBrand())))
                 .andExpect(jsonPath("$.vehicle.make", Is.is(repairEntity.getVehicle().getMake())))
                 .andExpect(jsonPath("$.vehicle.year", Is.is(repairEntity.getVehicle().getYear())))
-                .andExpect(jsonPath("$.vehicle.owner").doesNotExist());
+                .andExpect(jsonPath("$.vehicle.owner").doesNotExist())
+                .andExpect(jsonPath("$.lines[0].id", Is.is(repairLineEntity1.getId().toString())))
+                .andExpect(jsonPath("$.lines[0].name", Is.is(repairLineEntity1.getName())))
+                .andExpect(jsonPath("$.lines[0].price", Is.is(repairLineEntity1.getPrice())))
+                .andExpect(jsonPath("$.lines[0].amount", Is.is(repairLineEntity1.getAmount())))
+                .andExpect(jsonPath("$.lines[0].type", Is.is(repairLineEntity1.getType().getValue())))
+                .andExpect(jsonPath("$.lines[1].id", Is.is(repairLineEntity2.getId().toString())))
+                .andExpect(jsonPath("$.lines[1].name", Is.is(repairLineEntity2.getName())))
+                .andExpect(jsonPath("$.lines[1].price", Is.is(repairLineEntity2.getPrice())))
+                .andExpect(jsonPath("$.lines[1].amount", Is.is(repairLineEntity2.getAmount())))
+                .andExpect(jsonPath("$.lines[1].type", Is.is(repairLineEntity2.getType().getValue())));
     }
 
     @Test
@@ -178,6 +197,54 @@ public class RepairControllerTest {
                 .andExpect(jsonPath("$.vehicle.make", Is.is(vehicleEntity.getMake())))
                 .andExpect(jsonPath("$.vehicle.year", Is.is(vehicleEntity.getYear())))
                 .andExpect(jsonPath("$.vehicle.createdAt").isNotEmpty());
+    }
+
+    @Test
+    void addRepairLinesWithInvalidPayloadReturnsValidationErrors() throws Exception {
+        final AddRepairLinesDto addRepairLinesDto = AddRepairLinesDto.builder()
+                .parts(Arrays.asList(
+                        AddRepairLinesDto.Part.builder().build(),
+                        AddRepairLinesDto.Part.builder().id(UUID.randomUUID().toString()).amount(-1).build()
+                ))
+                .actions(Arrays.asList(
+                        AddRepairLinesDto.Action.builder().build(),
+                        AddRepairLinesDto.Action.builder().id(UUID.randomUUID().toString()).amount(-1).build()
+                ))
+                .custom(Arrays.asList(
+                        AddRepairLinesDto.Custom.builder().build(),
+                        AddRepairLinesDto.Custom.builder().name("test").build(),
+                        AddRepairLinesDto.Custom.builder().name("test").amount(-2).build(),
+                        AddRepairLinesDto.Custom.builder().name("test").amount(2).price(-2.0).build(),
+                        AddRepairLinesDto.Custom.builder().name("test").amount(2).price(2.0).type(1).build()
+                ))
+                .build();
+        final String payload = objectMapper.writeValueAsString(addRepairLinesDto);
+        final String id = UUID.randomUUID().toString();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/repairs/{id}/lines", id)
+                        .contentType("application/json")
+                        .content(payload))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.['parts[0].id']").isNotEmpty())
+                .andExpect(jsonPath("$.['parts[1].amount']").isNotEmpty())
+                .andExpect(jsonPath("$.['actions[0].id']").isNotEmpty())
+                .andExpect(jsonPath("$.['actions[1].amount']").isNotEmpty())
+                .andExpect(jsonPath("$.['custom[0].name']").isNotEmpty())
+                .andExpect(jsonPath("$.['custom[0].price']").isNotEmpty())
+                .andExpect(jsonPath("$.['custom[0].amount']").doesNotExist())
+                .andExpect(jsonPath("$.['custom[0].type']").isNotEmpty())
+                .andExpect(jsonPath("$.['custom[1].name']").doesNotExist())
+                .andExpect(jsonPath("$.['custom[1].price']").isNotEmpty())
+                .andExpect(jsonPath("$.['custom[1].amount']").doesNotExist())
+                .andExpect(jsonPath("$.['custom[1].type']").isNotEmpty())
+                .andExpect(jsonPath("$.['custom[2].name']").doesNotExist())
+                .andExpect(jsonPath("$.['custom[2].price']").isNotEmpty())
+                .andExpect(jsonPath("$.['custom[2].amount']").isNotEmpty())
+                .andExpect(jsonPath("$.['custom[2].type']").isNotEmpty())
+                .andExpect(jsonPath("$.['custom[3].name']").doesNotExist())
+                .andExpect(jsonPath("$.['custom[3].price']").isNotEmpty())
+                .andExpect(jsonPath("$.['custom[3].amount']").doesNotExist())
+                .andExpect(jsonPath("$.['custom[3].type']").isNotEmpty());
     }
 
 }

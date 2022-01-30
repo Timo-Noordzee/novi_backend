@@ -63,6 +63,7 @@ public class AddRepairLinesDto {
         @Min(value = 0, message = "the minimum value is 1")
         private int amount;
 
+        @NotNull(message = "field is required")
         @Min(value = 0, message = "the minimum value is 0")
         private Double price;
 

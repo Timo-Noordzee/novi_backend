@@ -16,7 +16,6 @@ import com.timo_noordzee.novi.backend.repository.RepairRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -62,14 +61,17 @@ public class RepairService extends BaseRestService<RepairEntity, UUID, CreateRep
     protected Optional<RepairEntity> findById(final UUID uuid) {
         final RepairEntity repairEntity = repository.findById(uuid, EntityGraphs.named(RepairEntity.GRAPH_DETAILED))
                 .orElseThrow(() -> new EntityNotFoundException(uuid.toString(), entityType()));
-        final List<RepairLineEntity> repairLineEntities = repairLineRepository.findAllByRepair(repairEntity);
-        repairEntity.setLines(repairLineEntities);
+        if (repairEntity.getLines().isEmpty()) {
+            final List<RepairLineEntity> repairLineEntities = repairLineRepository.findAllByRepair(repairEntity);
+            repairEntity.getLines().addAll(repairLineEntities);
+        }
         return Optional.of(repairEntity);
     }
 
     protected RepairEntity findById(final String id) {
         final UUID uuid = parseUUID(id);
-        return repository.findById(uuid).orElseThrow(() -> new EntityNotFoundException(entityType(), id));
+        return repository.findById(uuid, EntityGraphs.named(RepairEntity.GRAPH_DETAILED))
+                .orElseThrow(() -> new EntityNotFoundException(entityType(), id));
     }
 
     protected RepairLineEntity findRepairLineById(final String id) {
@@ -88,9 +90,16 @@ public class RepairService extends BaseRestService<RepairEntity, UUID, CreateRep
     @Transactional()
     public void addLinesToRepair(final String repairId, final AddRepairLinesDto addRepairLinesDto) {
         final RepairEntity repairEntity = findById(repairId);
-        final List<RepairLineEntity> repairLineEntities = new ArrayList<>();
 
-        repairLineEntities.addAll(addRepairLinesDto.getParts().stream().map(dto -> {
+        // Group Part lines by ID and sum the amount to aggregate duplicates
+        final List<AddRepairLinesDto.Part> partList = addRepairLinesDto.getParts().stream()
+                .collect(Collectors.groupingBy(AddRepairLinesDto.Part::getId))
+                .entrySet().stream().map(entry -> {
+                    final int total = entry.getValue().stream().map(AddRepairLinesDto.Part::getAmount).reduce(0, Integer::sum);
+                    return AddRepairLinesDto.Part.builder().id(entry.getKey()).amount(total).build();
+                }).collect(Collectors.toList());
+
+        final List<RepairLineEntity> repairLineEntities = partList.stream().map(dto -> {
             final int amount = dto.getAmount();
             final PartEntity partEntity = partService.getById(dto.getId());
             if (partEntity.getStock() < amount) {
@@ -99,9 +108,17 @@ public class RepairService extends BaseRestService<RepairEntity, UUID, CreateRep
             partService.decrementStock(partEntity.getId(), amount);
 
             return repairLineMapper.fromPartEntity(partEntity, repairEntity, amount);
-        }).collect(Collectors.toList()));
+        }).collect(Collectors.toList());
 
-        repairLineEntities.addAll(addRepairLinesDto.getActions().stream().map(dto -> {
+        // Group Action lines by ID and sum the amount to aggregate duplicates
+        final List<AddRepairLinesDto.Part> actionList = addRepairLinesDto.getActions().stream()
+                .collect(Collectors.groupingBy(AddRepairLinesDto.Action::getId))
+                .entrySet().stream().map(entry -> {
+                    final int total = entry.getValue().stream().map(AddRepairLinesDto.Action::getAmount).reduce(0, Integer::sum);
+                    return AddRepairLinesDto.Part.builder().id(entry.getKey()).amount(total).build();
+                }).collect(Collectors.toList());
+
+        repairLineEntities.addAll(actionList.stream().map(dto -> {
             final ActionEntity actionEntity = actionService.getById(dto.getId());
             return repairLineMapper.fromActionEntity(actionEntity, repairEntity, dto.getAmount());
         }).collect(Collectors.toList()));
@@ -117,7 +134,7 @@ public class RepairService extends BaseRestService<RepairEntity, UUID, CreateRep
         final RepairEntity repairEntity = findById(repairId);
         final RepairLineEntity repairLineEntity = findRepairLineById(repairLineId);
         if (repairEntity.getId() != repairLineEntity.getRepair().getId()) {
-            throw new EntityNotFoundException(repairLineId, RepairLineType.class.getSimpleName());
+            throw new EntityNotFoundException(repairLineId, RepairLineType.class.getSimpleName(), repairId, RepairEntity.class.getSimpleName());
         }
         repairLineMapper.updateWithDto(updateRepairLineDto, repairLineEntity);
         return repairLineRepository.save(repairLineEntity);
@@ -127,7 +144,7 @@ public class RepairService extends BaseRestService<RepairEntity, UUID, CreateRep
         final RepairEntity repairEntity = findById(repairId);
         final RepairLineEntity repairLineEntity = findRepairLineById(repairLineId);
         if (repairEntity.getId() != repairLineEntity.getRepair().getId()) {
-            throw new EntityNotFoundException(repairLineId, RepairLineType.class.getSimpleName());
+            throw new EntityNotFoundException(repairLineId, RepairLineType.class.getSimpleName(), repairId, RepairEntity.class.getSimpleName());
         }
         repairLineRepository.delete(repairLineEntity);
         return repairLineEntity;

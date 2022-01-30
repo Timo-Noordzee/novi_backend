@@ -1,18 +1,18 @@
 package com.timo_noordzee.novi.backend.service;
 
 import com.cosium.spring.data.jpa.entity.graph.domain.EntityGraph;
-import com.timo_noordzee.novi.backend.data.CustomerEntity;
-import com.timo_noordzee.novi.backend.data.RepairEntity;
-import com.timo_noordzee.novi.backend.data.VehicleEntity;
+import com.timo_noordzee.novi.backend.data.*;
+import com.timo_noordzee.novi.backend.dto.AddRepairLinesDto;
 import com.timo_noordzee.novi.backend.dto.CreateRepairDto;
 import com.timo_noordzee.novi.backend.dto.UpdateRepairDto;
+import com.timo_noordzee.novi.backend.dto.UpdateRepairLineDto;
 import com.timo_noordzee.novi.backend.exception.EntityNotFoundException;
 import com.timo_noordzee.novi.backend.exception.InvalidUUIDException;
+import com.timo_noordzee.novi.backend.exception.OutOfStockException;
+import com.timo_noordzee.novi.backend.exception.UnknownRepairLineTypeException;
 import com.timo_noordzee.novi.backend.mapper.*;
 import com.timo_noordzee.novi.backend.repository.*;
-import com.timo_noordzee.novi.backend.util.CustomerTestUtils;
-import com.timo_noordzee.novi.backend.util.RepairTestUtils;
-import com.timo_noordzee.novi.backend.util.VehicleTestUtils;
+import com.timo_noordzee.novi.backend.util.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,6 +27,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -55,6 +56,8 @@ public class RepairServiceTest {
     private final CustomerTestUtils customerTestUtils = new CustomerTestUtils();
     private final VehicleTestUtils vehicleTestUtils = new VehicleTestUtils();
     private final RepairTestUtils repairTestUtils = new RepairTestUtils();
+    private final RepairLineTestUtils repairLineTestUtils = new RepairLineTestUtils();
+    private final PartTestUtils partTestUtils = new PartTestUtils();
 
     @BeforeEach
     void setUp() {
@@ -69,6 +72,13 @@ public class RepairServiceTest {
         final PartService partService = new PartService(partRepository, partMapper);
         final ActionService actionService = new ActionService(actionRepository, actionMapper);
         repairService = new RepairService(repairRepository, repairMapper, vehicleService, partService, actionService, repairLineRepository, repairLineMapper);
+    }
+
+    RepairEntity setupMockRepair() {
+        final VehicleEntity vehicleEntity = vehicleTestUtils.generateMockEntity();
+        final RepairEntity repairEntity = repairTestUtils.generateMockEntity(vehicleEntity);
+        when(repairRepository.findById(any(UUID.class) ,any(EntityGraph.class))).thenReturn(Optional.of(repairEntity));
+        return repairEntity;
     }
 
     @Test
@@ -160,6 +170,124 @@ public class RepairServiceTest {
         assertThat(deletedRepairEntity).isNotNull();
         assertThat(deletedRepairEntity.getId()).isEqualTo(repairEntity.getId());
         assertThat(deletedRepairEntity.getVehicle()).isEqualTo(repairEntity.getVehicle());
+    }
+
+    @Test
+    void addPartLineWithNonexistentPartIdThrowsEntityNotFoundException() {
+        final RepairEntity repairEntity = setupMockRepair();
+        when(partRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+        final AddRepairLinesDto.Part addPartLineDto = repairLineTestUtils.generateMockPartLineDto(UUID.randomUUID().toString(), 1);
+        final AddRepairLinesDto addRepairLinesDto = repairLineTestUtils.generateMockDto(addPartLineDto);
+        final String repairId = repairEntity.getId().toString();
+
+        assertThrows(EntityNotFoundException.class, () -> repairService.addLinesToRepair(repairId, addRepairLinesDto));
+    }
+
+    @Test
+    void addPartLineWithoutStockThrowsOutOfStockException() {
+        final RepairEntity repairEntity = setupMockRepair();
+        final PartEntity partEntity = partTestUtils.generateMockEntity(0);
+        when(partRepository.findById(eq(partEntity.getId()))).thenReturn(Optional.of(partEntity));
+        final AddRepairLinesDto.Part addPartLineDto = repairLineTestUtils.generateMockPartLineDto(partEntity, 1);
+        final AddRepairLinesDto addRepairLinesDto = repairLineTestUtils.generateMockDto(addPartLineDto);
+        final String repairId = repairEntity.getId().toString();
+
+        assertThrows(OutOfStockException.class, () -> repairService.addLinesToRepair(repairId, addRepairLinesDto));
+    }
+
+    @Test
+    void addActionLineWithNonexistentActionIdThrowsEntityNotFoundException() {
+        final RepairEntity repairEntity = setupMockRepair();
+        when(actionRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+        final AddRepairLinesDto.Action addActionLineDto = repairLineTestUtils.generateMockActionLineDto(UUID.randomUUID().toString(), 1);
+        final AddRepairLinesDto addRepairLinesDto = repairLineTestUtils.generateMockDto(addActionLineDto);
+        final String repairId = repairEntity.getId().toString();
+
+        assertThrows(EntityNotFoundException.class, () -> repairService.addLinesToRepair(repairId, addRepairLinesDto));
+    }
+
+    @Test
+    void addCustomLineWithUnknownRepairLineTypeThrowsUnknownRepairLineTypeException() {
+        final RepairEntity repairEntity = setupMockRepair();
+        final AddRepairLinesDto.Custom addCustomLineDto = repairLineTestUtils.generateMockCustomLineDto(3);
+        final AddRepairLinesDto addRepairLinesDto = repairLineTestUtils.generateMockDto(addCustomLineDto);
+        final String repairId = repairEntity.getId().toString();
+
+        assertThrows(UnknownRepairLineTypeException.class, () -> repairService.addLinesToRepair(repairId, addRepairLinesDto));
+    }
+
+    @Test
+    void updateRepairLineForUnknownRepairThrowsEntityNotFoundException() {
+        when(repairRepository.findById(any(UUID.class), any(EntityGraph.class))).thenReturn(Optional.empty());
+        final String repairId = UUID.randomUUID().toString();
+        final String repairLineId = UUID.randomUUID().toString();
+        final UpdateRepairLineDto updateRepairLineDto = repairLineTestUtils.generateMockUpdateDto();
+
+        assertThrows(EntityNotFoundException.class, () -> repairService.updateRepairLine(repairId, repairLineId, updateRepairLineDto));
+    }
+
+    @Test
+    void updateNonexistentRepairLineThrowsEntityNotFoundException() {
+        final RepairEntity repairEntity = setupMockRepair();
+        when(repairLineRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+        final String repairLineId = UUID.randomUUID().toString();
+        final UpdateRepairLineDto updateRepairLineDto = repairLineTestUtils.generateMockUpdateDto();
+
+        assertThrows(EntityNotFoundException.class, () -> repairService.updateRepairLine(repairEntity.getId().toString(), repairLineId, updateRepairLineDto));
+    }
+
+    @Test
+    void updateRepairLineThatDoesNotMatchRepairIdThrowsEntityNotFoundException() {
+        final RepairEntity repairEntity1 = setupMockRepair();
+        final RepairEntity repairEntity2 = repairTestUtils.generateMockEntity();
+        final RepairLineEntity repairLineEntity = repairLineTestUtils.generateMockEntity(repairEntity2);
+        when(repairLineRepository.findById(any(UUID.class))).thenReturn(Optional.of(repairLineEntity));
+        final UpdateRepairLineDto updateRepairLineDto = repairLineTestUtils.generateMockUpdateDto();
+        final String repairId = repairEntity1.getId().toString();
+        final String repairLineId = UUID.randomUUID().toString();
+
+        assertThrows(EntityNotFoundException.class, () -> repairService.updateRepairLine(repairId, repairLineId, updateRepairLineDto));
+    }
+
+    @Test
+    void updateReturnLineReturnsUpdatedRepairLineEntity() {
+        final RepairEntity repairEntity = setupMockRepair();
+        final RepairLineEntity repairLineEntity = repairLineTestUtils.generateMockEntity(repairEntity);
+        when(repairLineRepository.findById(any(UUID.class))).thenReturn(Optional.of(repairLineEntity));
+        when(repairLineRepository.save(any(RepairLineEntity.class))).thenAnswer(i -> i.getArgument(0));
+        final UpdateRepairLineDto updateRepairLineDto = repairLineTestUtils.generateMockUpdateDto();
+        final String repairId = repairEntity.getId().toString();
+        final String lineId = repairLineEntity.getId().toString();
+
+        final RepairLineEntity updatedRepairLineEntity = repairService.updateRepairLine(repairId, lineId, updateRepairLineDto);
+
+        assertThat(updatedRepairLineEntity).isNotNull();
+        assertThat(updatedRepairLineEntity.getName()).isEqualTo(updateRepairLineDto.getName());
+        assertThat(updatedRepairLineEntity.getAmount()).isEqualTo(updateRepairLineDto.getAmount());
+        assertThat(updatedRepairLineEntity.getPrice()).isEqualTo(updateRepairLineDto.getPrice());
+        assertThat(updatedRepairLineEntity.getType().getValue()).isEqualTo(updateRepairLineDto.getType());
+    }
+
+    @Test
+    void deleteNonexistentRepairLineThrowsEntityNotFoundException() {
+        final RepairEntity repairEntity = setupMockRepair();
+        when(repairLineRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+        final String repairId = repairEntity.getId().toString();
+        final String lineId = UUID.randomUUID().toString();
+
+        assertThrows(EntityNotFoundException.class, () -> repairService.deleteRepairLine(repairId, lineId));
+    }
+
+    @Test
+    void deleteRepairLineThatDoesNotMatchRepairIdThrowsEntityNotFoundException() {
+        final RepairEntity repairEntity1 = setupMockRepair();
+        final RepairEntity repairEntity2 = repairTestUtils.generateMockEntity();
+        final RepairLineEntity repairLineEntity = repairLineTestUtils.generateMockEntity(repairEntity2);
+        when(repairLineRepository.findById(any(UUID.class))).thenReturn(Optional.of(repairLineEntity));
+        final String repairId = repairEntity1.getId().toString();
+        final String repairLineId = UUID.randomUUID().toString();
+
+        assertThrows(EntityNotFoundException.class, () -> repairService.deleteRepairLine(repairId, repairLineId));
     }
 
 }

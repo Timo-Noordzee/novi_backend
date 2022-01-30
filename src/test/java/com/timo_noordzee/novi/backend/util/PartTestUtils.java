@@ -10,18 +10,22 @@ import java.util.UUID;
 
 public class PartTestUtils {
 
-    private final Faker faker;
+    public final Faker faker;
 
     public PartTestUtils() {
         this.faker = new Faker(new Locale("nl"));
     }
 
     public PartEntity generateMockEntity() {
+        return generateMockEntity(faker.number().numberBetween(0, 99));
+    }
+
+    public PartEntity generateMockEntity(final int stock) {
         return PartEntity.builder()
                 .id(UUID.randomUUID())
                 .name(faker.vehicle().carOptions(1, 1).get(0))
                 .price(faker.number().randomDouble(2, 0, 9999))
-                .stock(faker.number().numberBetween(0, 99))
+                .stock(stock)
                 .build();
     }
 
@@ -40,5 +44,5 @@ public class PartTestUtils {
                 .stock(faker.number().numberBetween(0, 99))
                 .build();
     }
-    
+
 }
