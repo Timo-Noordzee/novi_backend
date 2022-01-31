@@ -44,4 +44,8 @@ public class RepairLineEntity {
     @JsonIgnore
     private RepairEntity repair;
 
+    public double getTotalPrice() {
+        return amount * price;
+    }
+
 }
