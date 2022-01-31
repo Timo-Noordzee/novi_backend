@@ -228,15 +228,19 @@ Na het mappen wordt het veld customer gezet middels de setter en kan de model op
 ![Voertuig toevoegen diagram](./diagrams/add_vehicle_sequence_diagram.svg)
 
 ### 4.2 Factuur genereren diagram
+Net als bij het toevoegen van een voertuig wordt eerst gekeken of er niet al een entity bestaat met het id. Hiervoor
+wordt de `findById` functie op de `InvoiceRepostitory` gebruikt. Indien er al een `InvoiceEntity` bestaat met het
+opgegeven id gooit de service een `EntityAlreadyExistsException`, dit is niet opgenomen in het sequence diagram.
 
-Een factuur wordt gegenereerd op basis van de `RepairEntity` model. De eerste stap is daarom om de RepairEntity met het
+Een factuur wordt gegenereerd op basis van de `RepairEntity` model. De eerste stap is daarom om de `RepairEntity` met het
 gegeven id op te halen uit de database. Indien een `RepairEntity` met het id niet bestaat, dient de app een foutmelding
-terug te geven. Dit scenario is niet opgenomen in het diagram, maar de aanroep naar `findById` op de `RepairRepository`
+terug te geven. Dit scenario is niet opgenomen in het diagram, maar de aanroep naar `getById` op de `RepairService`
 wel.
 
-Als de `RepairEntity` geladen uit is de database is het aan de `InvoiceService` om een pdf te genereren. Tijdens het
-vooronderzoek is besloten hiervoor thymeleaf en flying-saucer-pdf te gebruiken. Eerst maakt de `InvoiceService` een
-nieuwe instantie van een `InvoiceEntity` en slaat deze op in de database. Het id wordt vervolgens gebruikt door de
-`StorageService` om een `OutputStream` te genereren om het pdf-bestand op te slaan.
+Als de `RepairEntity` geladen is uit de database is het aan de `InvoiceService` om een pdf te genereren. Eerst wordt de
+`fromCreateDto` aangeroepen om een instantie van een `InvoiceEntity` te maken. Vervolgens wordt de `RepairEntity`
+gebruikt om een pdf te genereren middels de `generateInvoicePdf` functie. De gengenereerde pdf wordt als byte array
+opgeslagen in de data attribute van `RepairEntity`. Tenslotte wordt de `InvoiceEntity` opgeslagen middels de `save`
+functie op de `InvoiceRepository`.
 
-![Factuur genereren diagram](./diagrams/generate_invoice_sequence_diagram.svg)
+![Factuur genereren diagram](./diagrams/add_invoice_sequence_diagram.svg)

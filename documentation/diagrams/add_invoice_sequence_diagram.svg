@@ -1,0 +1,419 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1604" height="556">
+    <defs />
+    <g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 8 8 L 1592 8 L 1592 544 L 8 544 L 8 8" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="#ffffff" stroke="none" d="M 8 8 L 8 30 L 105.66259765625 30 L 116.66259765625 19 L 116.66259765625 8 L 8 8" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 8 8 L 8 30 L 105.66259765625 30 L 116.66259765625 19 L 116.66259765625 8 L 8 8 L 8 8" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <g>
+                <path fill="none" stroke="none" />
+                <text fill="#000000" stroke="none" font-family="Arial" font-size="13px" font-style="normal" font-weight="normal" text-decoration="none" x="32.72998046875" y="25.5">Add Invoice</text>
+            </g>
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <g>
+                <path fill="none" stroke="none" />
+                <text fill="#000000" stroke="none" font-family="Arial" font-size="13px" font-style="normal" font-weight="bold" text-decoration="none" x="13" y="25.5">sd</text>
+            </g>
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <rect fill="#C0C0C0" stroke="none" x="31" y="47" width="71.736328125" height="39" opacity="0.2" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <rect fill="#ffffff" stroke="none" x="24" y="40" width="71.736328125" height="39" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 24 40 L 95.736328125 40 L 95.736328125 79 L 24 79 L 24 40 Z Z" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <g>
+                <path fill="none" stroke="none" />
+                <text fill="#000000" stroke="none" font-family="Arial" font-size="13px" font-style="normal" font-weight="bold" text-decoration="none" x="44.697265625" y="59.5">Actor</text>
+            </g>
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 60.5 80 L 60.5 544" stroke-miterlimit="10" stroke-dasharray="3" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <rect fill="#C0C0C0" stroke="none" x="183" y="47" width="133.84814453125" height="39" opacity="0.2" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <rect fill="#ffffff" stroke="none" x="176" y="40" width="133.84814453125" height="39" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 176 40 L 309.84814453125 40 L 309.84814453125 79 L 176 79 L 176 40 Z Z" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <g>
+                <path fill="none" stroke="none" />
+                <text fill="#000000" stroke="none" font-family="Arial" font-size="13px" font-style="normal" font-weight="bold" text-decoration="none" x="190.5400390625" y="59.5">: InvoiceController</text>
+            </g>
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 243.5 80 L 243.5 544" stroke-miterlimit="10" stroke-dasharray="3" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <rect fill="#C0C0C0" stroke="none" x="399" y="47" width="117.998046875" height="39" opacity="0.2" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <rect fill="#ffffff" stroke="none" x="392" y="40" width="117.998046875" height="39" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 392 40 L 509.998046875 40 L 509.998046875 79 L 392 79 L 392 40 Z Z" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <g>
+                <path fill="none" stroke="none" />
+                <text fill="#000000" stroke="none" font-family="Arial" font-size="13px" font-style="normal" font-weight="bold" text-decoration="none" x="405.1181640625" y="59.5">: InvoiceService</text>
+            </g>
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 451.5 80 L 451.5 544" stroke-miterlimit="10" stroke-dasharray="3" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <rect fill="#C0C0C0" stroke="none" x="647" y="47" width="139.63720703125" height="39" opacity="0.2" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <rect fill="#ffffff" stroke="none" x="640" y="40" width="139.63720703125" height="39" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 640 40 L 779.63720703125 40 L 779.63720703125 79 L 640 79 L 640 40 Z Z" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <g>
+                <path fill="none" stroke="none" />
+                <text fill="#000000" stroke="none" font-family="Arial" font-size="13px" font-style="normal" font-weight="bold" text-decoration="none" x="654.543212890625" y="59.5">: InvoiceRepository</text>
+            </g>
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 710.5 80 L 710.5 544" stroke-miterlimit="10" stroke-dasharray="3" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <rect fill="#C0C0C0" stroke="none" x="823" y="47" width="113.66259765625" height="39" opacity="0.2" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <rect fill="#ffffff" stroke="none" x="816" y="40" width="113.66259765625" height="39" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 816 40 L 929.66259765625 40 L 929.66259765625 79 L 816 79 L 816 40 Z Z" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <g>
+                <path fill="none" stroke="none" />
+                <text fill="#000000" stroke="none" font-family="Arial" font-size="13px" font-style="normal" font-weight="bold" text-decoration="none" x="828.397705078125" y="59.5">: RepairService</text>
+            </g>
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 873.5 80 L 873.5 544" stroke-miterlimit="10" stroke-dasharray="3" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <rect fill="#C0C0C0" stroke="none" x="983" y="47" width="135.3017578125" height="39" opacity="0.2" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <rect fill="#ffffff" stroke="none" x="976" y="40" width="135.3017578125" height="39" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 976 40 L 1111.3017578125 40 L 1111.3017578125 79 L 976 79 L 976 40 Z Z" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <g>
+                <path fill="none" stroke="none" />
+                <text fill="#000000" stroke="none" font-family="Arial" font-size="13px" font-style="normal" font-weight="bold" text-decoration="none" x="989.82275390625" y="59.5">: RepairRepository</text>
+            </g>
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 1044.5 80 L 1044.5 544" stroke-miterlimit="10" stroke-dasharray="3" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <rect fill="#C0C0C0" stroke="none" x="1375" y="299" width="188.75537109375" height="39" opacity="0.2" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <rect fill="#ffffff" stroke="none" x="1368" y="292" width="188.75537109375" height="39" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 1368 292 L 1556.75537109375 292 L 1556.75537109375 331 L 1368 331 L 1368 292 Z Z" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <g>
+                <path fill="none" stroke="none" />
+                <text fill="#000000" stroke="none" font-family="Arial" font-size="13px" font-style="normal" font-weight="bold" text-decoration="none" x="1385.425048828125" y="311.5">invoiceEntity: InvoiceEntity</text>
+            </g>
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 1463.5 332 L 1463.5 544" stroke-miterlimit="10" stroke-dasharray="3" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <rect fill="#C0C0C0" stroke="none" x="1183" y="47" width="117.96630859375" height="39" opacity="0.2" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <rect fill="#ffffff" stroke="none" x="1176" y="40" width="117.96630859375" height="39" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 1176 40 L 1293.96630859375 40 L 1293.96630859375 79 L 1176 79 L 1176 40 Z Z" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <g>
+                <path fill="none" stroke="none" />
+                <text fill="#000000" stroke="none" font-family="Arial" font-size="13px" font-style="normal" font-weight="bold" text-decoration="none" x="1188.7373046875" y="59.5">: InvoiceMapper</text>
+            </g>
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 1235.5 80 L 1235.5 544" stroke-miterlimit="10" stroke-dasharray="3" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 60 112 L 236 112" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="#000000" stroke="none" d="M 225.83732514237585 116.20951775601598 L 236 112 L 225.83732514237585 107.79048224398402" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 225.83732514237585 116.20951775601598 L 236 112 L 225.83732514237585 107.79048224398402 L 225.83732514237585 116.20951775601598" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <g>
+                <path fill="none" stroke="none" />
+                <text fill="#000000" stroke="none" font-family="Arial" font-size="13px" font-style="normal" font-weight="normal" text-decoration="none" x="107.5" y="108.5">1 : addInvoice</text>
+            </g>
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <rect fill="#ffffff" stroke="none" x="236" y="112" width="13" height="392" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 236 112 L 249 112 L 249 504 L 236 504 L 236 112 Z Z" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 249 128 L 444 128" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="#000000" stroke="none" d="M 433.83732514237585 132.209517756016 L 444 128 L 433.83732514237585 123.79048224398402" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 433.83732514237585 132.209517756016 L 444 128 L 433.83732514237585 123.79048224398402 L 433.83732514237585 132.209517756016" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <g>
+                <path fill="none" stroke="none" />
+                <text fill="#000000" stroke="none" font-family="Arial" font-size="13px" font-style="normal" font-weight="normal" text-decoration="none" x="273.5" y="124.5">2 : add(createInvoiceDto)</text>
+            </g>
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <rect fill="#ffffff" stroke="none" x="444" y="128" width="13" height="376" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 444 128 L 457 128 L 457 504 L 444 504 L 444 128 Z Z" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 457 145 L 703 145" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="#000000" stroke="none" d="M 692.8373251423759 149.209517756016 L 703 145 L 692.8373251423758 140.790482243984" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 692.8373251423759 149.209517756016 L 703 145 L 692.8373251423758 140.790482243984 L 692.8373251423759 149.209517756016" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <g>
+                <path fill="none" stroke="none" />
+                <text fill="#000000" stroke="none" font-family="Arial" font-size="13px" font-style="normal" font-weight="normal" text-decoration="none" x="527.5" y="140.5">3 : findById(id)</text>
+            </g>
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <rect fill="#ffffff" stroke="none" x="703" y="145" width="13" height="28" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 703 145 L 716 145 L 716 173 L 703 173 L 703 145 Z Z" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 457 192 L 866 192" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="#000000" stroke="none" d="M 855.8373251423759 196.209517756016 L 866 192 L 855.8373251423758 187.790482243984" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 855.8373251423759 196.209517756016 L 866 192 L 855.8373251423758 187.790482243984 L 855.8373251423759 196.209517756016" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <g>
+                <path fill="none" stroke="none" />
+                <text fill="#000000" stroke="none" font-family="Arial" font-size="13px" font-style="normal" font-weight="normal" text-decoration="none" x="526.5" y="183.5">4 : getById(id)</text>
+            </g>
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <rect fill="#ffffff" stroke="none" x="866" y="192" width="13" height="56" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 866 192 L 879 192 L 879 248 L 866 248 L 866 192 Z Z" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 879 208 L 1037 208" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="#000000" stroke="none" d="M 1026.837325142376 212.209517756016 L 1037 208 L 1026.837325142376 203.790482243984" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 1026.837325142376 212.209517756016 L 1037 208 L 1026.837325142376 203.790482243984 L 1026.837325142376 212.209517756016" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <g>
+                <path fill="none" stroke="none" />
+                <text fill="#000000" stroke="none" font-family="Arial" font-size="13px" font-style="normal" font-weight="normal" text-decoration="none" x="916.5" y="204.5">5 : findById(id)</text>
+            </g>
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <rect fill="#ffffff" stroke="none" x="1037" y="208" width="13" height="28" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 1037 208 L 1050 208 L 1050 236 L 1037 236 L 1037 208 Z Z" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 1037 224 L 879 224" stroke-miterlimit="10" stroke-dasharray="3" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 889.1626748576241 219.790482243984 L 879 224 L 889.1626748576241 228.209517756016" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <g>
+                <path fill="none" stroke="none" />
+                <text fill="#000000" stroke="none" font-family="Arial" font-size="13px" font-style="normal" font-weight="normal" text-decoration="none" x="940.5" y="240.5">repair</text>
+            </g>
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 866 240 L 457 240" stroke-miterlimit="10" stroke-dasharray="3" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 467.16267485762415 235.790482243984 L 457 240 L 467.16267485762415 244.209517756016" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <g>
+                <path fill="none" stroke="none" />
+                <text fill="#000000" stroke="none" font-family="Arial" font-size="13px" font-style="normal" font-weight="normal" text-decoration="none" x="727.5" y="259.5">repair</text>
+            </g>
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 457 296 L 1228 296" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="#000000" stroke="none" d="M 1217.837325142376 300.209517756016 L 1228 296 L 1217.837325142376 291.790482243984" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 1217.837325142376 300.209517756016 L 1228 296 L 1217.837325142376 291.790482243984 L 1217.837325142376 300.209517756016" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <g>
+                <path fill="none" stroke="none" />
+                <text fill="#000000" stroke="none" font-family="Arial" font-size="13px" font-style="normal" font-weight="normal" text-decoration="none" x="471.5" y="291.5">6 : fromCreateDto(createInvoiceDto)</text>
+            </g>
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <rect fill="#ffffff" stroke="none" x="1228" y="296" width="13" height="28" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 1228 296 L 1241 296 L 1241 324 L 1228 324 L 1228 296 Z Z" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 1241 312 L 1368 312" stroke-miterlimit="10" stroke-dasharray="3" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 1357.837325142376 316.209517756016 L 1368 312 L 1357.837325142376 307.790482243984" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <g>
+                <path fill="none" stroke="none" />
+                <text fill="#000000" stroke="none" font-family="Arial" font-size="13px" font-style="normal" font-weight="normal" text-decoration="none" x="1277.5" y="307.5">«create»</text>
+            </g>
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 457 344 L 487 344 L 487 364 L 464 364" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="#000000" stroke="none" d="M 474.16267485762415 359.790482243984 L 464 364 L 474.16267485762415 368.209517756016" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 474.16267485762415 359.790482243984 L 464 364 L 474.16267485762415 368.209517756016 L 474.16267485762415 359.790482243984" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <g>
+                <path fill="none" stroke="none" />
+                <text fill="#000000" stroke="none" font-family="Arial" font-size="13px" font-style="normal" font-weight="normal" text-decoration="none" x="495.5" y="359.5">7 : generateInvoicePdf(repair)</text>
+            </g>
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <rect fill="#ffffff" stroke="none" x="451" y="364" width="13" height="28" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 451 364 L 464 364 L 464 392 L 451 392 L 451 364 Z Z" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 457 416 L 1456 416" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="#000000" stroke="none" d="M 1445.837325142376 420.209517756016 L 1456 416 L 1445.837325142376 411.790482243984" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 1445.837325142376 420.209517756016 L 1456 416 L 1445.837325142376 411.790482243984 L 1445.837325142376 420.209517756016" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <g>
+                <path fill="none" stroke="none" />
+                <text fill="#000000" stroke="none" font-family="Arial" font-size="13px" font-style="normal" font-weight="normal" text-decoration="none" x="902.5" y="410.5">8 : setData(data)</text>
+            </g>
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <rect fill="#ffffff" stroke="none" x="1456" y="416" width="13" height="28" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 1456 416 L 1469 416 L 1469 444 L 1456 444 L 1456 416 Z Z" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 457 465 L 703 465" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="#000000" stroke="none" d="M 692.8373251423759 469.209517756016 L 703 465 L 692.8373251423758 460.790482243984" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 692.8373251423759 469.209517756016 L 703 465 L 692.8373251423758 460.790482243984 L 692.8373251423759 469.209517756016" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <g>
+                <path fill="none" stroke="none" />
+                <text fill="#000000" stroke="none" font-family="Arial" font-size="13px" font-style="normal" font-weight="normal" text-decoration="none" x="516.5" y="461.5">9 : save(invoiceEntity)</text>
+            </g>
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <rect fill="#ffffff" stroke="none" x="703" y="465" width="13" height="28" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 703 465 L 716 465 L 716 493 L 703 493 L 703 465 Z Z" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 703 488 L 457 488" stroke-miterlimit="10" stroke-dasharray="3" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 467.16267485762415 483.790482243984 L 457 488 L 467.16267485762415 492.209517756016" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <g>
+                <path fill="none" stroke="none" />
+                <text fill="#000000" stroke="none" font-family="Arial" font-size="13px" font-style="normal" font-weight="normal" text-decoration="none" x="542.5" y="504.5">invoiceEntity</text>
+            </g>
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 451 504 L 243 504" stroke-miterlimit="10" stroke-dasharray="3" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <path fill="none" stroke="#000000" d="M 253.16267485762415 499.790482243984 L 243 504 L 253.16267485762415 508.209517756016" stroke-miterlimit="10" />
+        </g>
+        <g transform="translate(2,2) scale(1,1)">
+            <g>
+                <path fill="none" stroke="none" />
+                <text fill="#000000" stroke="none" font-family="Arial" font-size="13px" font-style="normal" font-weight="normal" text-decoration="none" x="309.5" y="520.5">invoiceEntity</text>
+            </g>
+        </g>
+    </g>
+</svg>
