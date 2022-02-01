@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title th:text="${'Factuur: ' + id}">Factuur: db436b84-7073-42cb-b56c-13decc812c50</title>
+    <link th:href="@{classpath:static/css/invoice.css}" href="/static/css/invoice.css" rel="stylesheet"/>
+</head>
+
+<body>
+<div class="invoice-box">
+    <table>
+        <tr class="top">
+            <td colspan="3">
+                <table>
+                    <tr class="header">
+                        <td class="title">
+                            <img th:src="@{classpath:static/img/logo_novi.png}" src="/static/img/logo_novi.png"
+                                 height="100px" alt="logo"/>
+                        </td>
+
+                        <td>
+                            <span th:text="${#dates.format(createdAt, 'dd MMMM yyyy')}">January 1, 2015</span><br/>
+                            <small th:text="${'#' + id}">#375f7fc6-eaac-49ba-8041-56c8301ed6ca</small>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        <tr class="information">
+            <td colspan="3">
+                <table>
+                    <tr>
+                        <td>
+                            NOVI Garage B.V.<br/>
+                            Newtonlaan 247<br/>
+                            3584 BH Utrecht
+                        </td>
+
+                        <td>
+                            <span th:text="${customer.name + ' ' + customer.surname}">Customer name</span><br/>
+                            <span th:text="${customer.email}">E-mailadres</span><br/>
+                            <span th:text="${vehicle.license}">Vehicle License</span>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        <tr th:if="${!parts.isEmpty()}" class="heading">
+            <td>Product</td>
+            <td>Aantal</td>
+            <td>Prijs (exl. BTW)</td>
+        </tr>
+
+        <tr th:if="${!parts.isEmpty()}" th:each="part: ${parts}" class="item">
+            <!--/*@thymesVar id="part" type="com.timo_noordzee.novi.backend.data.RepairLineEntity"*/-->
+            <td th:text="${part.name}">Engine</td>
+            <td th:text="${part.amount}">1</td>
+            <td th:text="${#numbers.formatCurrency(part.getTotalPrice())}">€300.00</td>
+        </tr>
+
+        <tr th:if="${!parts.isEmpty()}" class="empty-row">
+            <td colspan="3"></td>
+        </tr>
+
+        <tr th:if="${!actions.isEmpty()}" class="heading">
+            <td>Handeling</td>
+            <td>Aantal</td>
+            <td>Prijs (exl. BTW)</td>
+        </tr>
+
+        <tr th:if="${!actions.isEmpty()}" th:each="action: ${actions}" class="item">
+            <!--/*@thymesVar id="action" type="com.timo_noordzee.novi.backend.data.RepairLineEntity"*/-->
+            <td th:text="${action.name}">Replace Engine</td>
+            <td th:text="${action.amount}">1</td>
+            <td th:text="${#numbers.formatCurrency(action.getTotalPrice())}">€300.00</td>
+        </tr>
+
+        <tr th:if="${!actions.isEmpty()}" class="empty-row">
+            <td colspan="3"></td>
+        </tr>
+
+        <tr class="total">
+            <td th:text="${'Totaal (exl. BTW): ' + #numbers.formatCurrency(total)}" colspan="3">Totaal (exl. BTW):
+                €385.00
+            </td>
+        </tr>
+        <tr class="total">
+            <td th:text="${'Totaal: ' + #numbers.formatCurrency(total * 1.21)}" colspan="3">Total: $385.00</td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>
