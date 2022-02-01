@@ -13,6 +13,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "employee")
+@Table(indexes = {
+        @Index(name = "idx_employee_email", columnList = "email")
+})
 @NamedEntityGraphs(value = {
         @NamedEntityGraph(name = EmployeeEntity.GRAPH_DEFAULT),
 })
