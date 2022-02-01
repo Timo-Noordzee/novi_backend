@@ -9,6 +9,7 @@ import com.timo_noordzee.novi.backend.dto.AddRepairLinesDto;
 import com.timo_noordzee.novi.backend.dto.CreateRepairDto;
 import com.timo_noordzee.novi.backend.dto.UpdateRepairDto;
 import com.timo_noordzee.novi.backend.exception.EntityNotFoundException;
+import com.timo_noordzee.novi.backend.service.AuthUserService;
 import com.timo_noordzee.novi.backend.service.RepairService;
 import com.timo_noordzee.novi.backend.util.CustomerTestUtils;
 import com.timo_noordzee.novi.backend.util.RepairLineTestUtils;
@@ -19,6 +20,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -27,12 +30,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import static com.timo_noordzee.novi.backend.domain.Role.*;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WithMockUser(roles = {ROLE_MECHANIC})
 @WebMvcTest(controllers = RepairController.class)
 public class RepairControllerTest {
 
@@ -43,12 +48,48 @@ public class RepairControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
+    @SuppressWarnings("unused")
+    private AuthUserService authUserService;
+
+    @MockBean
     private RepairService repairService;
 
     private final VehicleTestUtils vehicleTestUtils = new VehicleTestUtils();
     private final CustomerTestUtils customerTestUtils = new CustomerTestUtils();
     private final RepairTestUtils repairTestUtils = new RepairTestUtils();
     private final RepairLineTestUtils repairLineTestUtils = new RepairLineTestUtils();
+
+    @Test
+    @WithMockUser(roles = {ROLE_BACKOFFICE})
+    void makeGetRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/repairs"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = {ROLE_BACKOFFICE, ROLE_CASHIER})
+    void makePostRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/repairs"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = {ROLE_BACKOFFICE, ROLE_CASHIER})
+    void makePutRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        final String id = UUID.randomUUID().toString();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/repairs/{id}", id))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = {ROLE_BACKOFFICE, ROLE_CASHIER})
+    void makeDeleteRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        final String id = UUID.randomUUID().toString();
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/repairs/{id}", id))
+                .andExpect(status().isForbidden());
+    }
 
     @Test
     void getAllReturnsListOfRepairs() throws Exception {
@@ -121,7 +162,7 @@ public class RepairControllerTest {
         final String payload = objectMapper.writeValueAsString(createRepairDto);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/repairs")
-                        .contentType("application/json")
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(payload))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.vehicleId").isNotEmpty());
@@ -137,7 +178,7 @@ public class RepairControllerTest {
         final String payload = objectMapper.writeValueAsString(createRepairDto);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/repairs")
-                        .contentType("application/json")
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(payload))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", Is.is(repairEntity.getId().toString())))
@@ -163,7 +204,7 @@ public class RepairControllerTest {
         when(repairService.update(any(String.class), any(UpdateRepairDto.class))).thenReturn(repairEntity);
 
         mockMvc.perform(MockMvcRequestBuilders.put("/repairs/{id}", id)
-                        .contentType("application/json")
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(payload))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", Is.is(repairEntity.getId().toString())))
@@ -222,7 +263,7 @@ public class RepairControllerTest {
         final String id = UUID.randomUUID().toString();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/repairs/{id}/lines", id)
-                        .contentType("application/json")
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(payload))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.['parts[0].id']").isNotEmpty())

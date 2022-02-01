@@ -17,11 +17,13 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static com.timo_noordzee.novi.backend.domain.Role.ROLE_MECHANIC;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -29,11 +31,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
+@WithMockUser(roles = {ROLE_MECHANIC})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class ShortcomingIntegrationTest {
-
-    private final VehicleTestUtils vehicleTestUtils = new VehicleTestUtils();
-    private final ShortcomingTestUtils shortcomingTestUtils = new ShortcomingTestUtils();
 
     @Autowired
     private MockMvc mockMvc;
@@ -46,6 +46,9 @@ public class ShortcomingIntegrationTest {
 
     @Autowired
     private ShortcomingRepository shortcomingRepository;
+
+    private final VehicleTestUtils vehicleTestUtils = new VehicleTestUtils();
+    private final ShortcomingTestUtils shortcomingTestUtils = new ShortcomingTestUtils();
 
     @Test
     void injectedComponentsAreNotNull() {
@@ -63,7 +66,7 @@ public class ShortcomingIntegrationTest {
         final String payload = objectMapper.writeValueAsString(createShortcomingDto);
 
         final MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/shortcomings")
-                        .contentType("application/json")
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(payload))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -103,7 +106,7 @@ public class ShortcomingIntegrationTest {
         final String payload = objectMapper.writeValueAsString(updateShortcomingDto);
 
         mockMvc.perform(MockMvcRequestBuilders.put("/shortcomings/{id}", shortcomingEntity.getId().toString())
-                        .contentType("application/json")
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(payload))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))

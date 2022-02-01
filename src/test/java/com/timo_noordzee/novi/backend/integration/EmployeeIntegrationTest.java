@@ -14,29 +14,34 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.UUID;
 
+import static com.timo_noordzee.novi.backend.domain.Role.ROLE_ADMIN;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
+@WithMockUser(roles = {ROLE_ADMIN})
+@ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class EmployeeIntegrationTest {
-
-    private final EmployeeTestUtils employeeTestUtils = new EmployeeTestUtils();
 
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    private final EmployeeTestUtils employeeTestUtils = new EmployeeTestUtils();
 
     @Test
     void injectedComponentsAreNotNull() {
@@ -48,10 +53,11 @@ public class EmployeeIntegrationTest {
     void addEmployeeWorksThroughAllLayers() throws Exception {
         final Role role = employeeTestUtils.randomRole();
         final CreateEmployeeDto createEmployeeDto = employeeTestUtils.generateMockCreateDto(role);
+        final String payload = objectMapper.writeValueAsString(createEmployeeDto);
 
         final MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/employees")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(createEmployeeDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(payload))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.name", Is.is(createEmployeeDto.getName())))
@@ -87,16 +93,19 @@ public class EmployeeIntegrationTest {
     @Test
     void addingExistingEmployeeThrowsEntityAlreadyExistsException() throws Exception {
         final CreateEmployeeDto createEmployeeDto = employeeTestUtils.generateMockCreateDto();
+        String payload = objectMapper.writeValueAsString(createEmployeeDto);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/employees")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(createEmployeeDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(payload))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
+        payload = objectMapper.writeValueAsString(createEmployeeDto);
+
         mockMvc.perform(MockMvcRequestBuilders.post("/employees")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(createEmployeeDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(payload))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorCode", Is.is(EntityAlreadyExistsException.ERROR_CODE)));
     }
@@ -104,7 +113,7 @@ public class EmployeeIntegrationTest {
     @Test
     void postWithInvalidPayloadReturnsValidationErrors() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/employees")
-                        .contentType("application/json")
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))

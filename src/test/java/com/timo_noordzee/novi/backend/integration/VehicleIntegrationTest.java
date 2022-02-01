@@ -25,6 +25,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -32,12 +33,14 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Base64;
 
+import static com.timo_noordzee.novi.backend.domain.Role.ROLE_ADMINISTRATIVE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@WithMockUser(roles = {ROLE_ADMINISTRATIVE})
 @AutoConfigureTestDatabase
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class VehicleIntegrationTest {
@@ -81,7 +84,7 @@ public class VehicleIntegrationTest {
         final CreateVehicleDto createVehicleDto = vehicleTestUtils.generateMockCreateDto(customerEntity.getId());
 
         final MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/vehicles")
-                        .contentType("application/json")
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createVehicleDto)))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -118,7 +121,7 @@ public class VehicleIntegrationTest {
         final UpdateVehicleDto updateVehicleDto = vehicleTestUtils.generateMockUpdateDto(customerEntity2.getId().toString());
 
         mockMvc.perform(MockMvcRequestBuilders.put("/vehicles/{id}", vehicleEntity.getVin())
-                        .contentType("application/json")
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateVehicleDto)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -206,7 +209,7 @@ public class VehicleIntegrationTest {
     @Test
     void addVehiclePapersWithForbiddenFileTypeReturnsForbiddenFileTypeException() throws Exception {
         final String vehicleId = vehicleTestUtils.randomVin();
-        final MockMultipartFile multipartFile = vehiclePapersTestUtils.generateMockMultipartFile("application/png");
+        final MockMultipartFile multipartFile = vehiclePapersTestUtils.generateMockMultipartFile(MediaType.IMAGE_PNG);
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/vehicles/{id}/papers", vehicleId).file(multipartFile))
                 .andExpect(status().isBadRequest())
@@ -219,7 +222,7 @@ public class VehicleIntegrationTest {
         customerRepository.save(customerEntity);
         final VehicleEntity vehicleEntity = vehicleTestUtils.generateMockEntity(customerEntity);
         vehicleRepository.save(vehicleEntity);
-        final MockMultipartFile multipartFile = vehiclePapersTestUtils.generateMockMultipartFile("application/pdf");
+        final MockMultipartFile multipartFile = vehiclePapersTestUtils.generateMockMultipartFile(MediaType.APPLICATION_PDF);
         final int startIndex = multipartFile.getOriginalFilename().replaceAll("\\\\", "/").lastIndexOf("/");
         final String expectedFileName = multipartFile.getOriginalFilename().substring(startIndex + 1);
 

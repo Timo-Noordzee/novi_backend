@@ -3,6 +3,7 @@ package com.timo_noordzee.novi.backend.controller;
 import com.timo_noordzee.novi.backend.data.VehicleEntity;
 import com.timo_noordzee.novi.backend.data.VehiclePapersEntity;
 import com.timo_noordzee.novi.backend.exception.EntityNotFoundException;
+import com.timo_noordzee.novi.backend.service.AuthUserService;
 import com.timo_noordzee.novi.backend.service.VehiclePapersService;
 import com.timo_noordzee.novi.backend.util.VehiclePapersTestUtils;
 import com.timo_noordzee.novi.backend.util.VehicleTestUtils;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -20,11 +22,13 @@ import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
+import static com.timo_noordzee.novi.backend.domain.Role.*;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@WithMockUser(roles = {ROLE_ADMINISTRATIVE})
 @WebMvcTest(controllers = VehiclePapersController.class)
 public class VehiclePapersControllerTest {
 
@@ -32,10 +36,47 @@ public class VehiclePapersControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
+    @SuppressWarnings("unused")
+    private AuthUserService authUserService;
+
+
+    @MockBean
     private VehiclePapersService vehiclePapersService;
 
     private final VehicleTestUtils vehicleTestUtils = new VehicleTestUtils();
     private final VehiclePapersTestUtils vehiclePapersTestUtils = new VehiclePapersTestUtils();
+
+    @Test
+    @WithMockUser(roles = {ROLE_BACKOFFICE, ROLE_CASHIER})
+    void makeGetRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/vehiclePapers"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = {ROLE_BACKOFFICE, ROLE_CASHIER, ROLE_MECHANIC})
+    void makePostRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/vehiclePapers"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = {ROLE_BACKOFFICE, ROLE_CASHIER, ROLE_MECHANIC})
+    void makePutRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        final String id = UUID.randomUUID().toString();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/vehiclePapers/{id}", id))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = {ROLE_BACKOFFICE, ROLE_CASHIER, ROLE_MECHANIC})
+    void makeDeleteRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        final String id = UUID.randomUUID().toString();
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/vehiclePapers/{id}", id))
+                .andExpect(status().isForbidden());
+    }
 
     @Test
     void getAllReturnsArrayOfVehicles() throws Exception {

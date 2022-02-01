@@ -7,6 +7,7 @@ import com.timo_noordzee.novi.backend.data.VehicleEntity;
 import com.timo_noordzee.novi.backend.dto.CreateShortcomingDto;
 import com.timo_noordzee.novi.backend.dto.UpdateShortcomingDto;
 import com.timo_noordzee.novi.backend.exception.EntityNotFoundException;
+import com.timo_noordzee.novi.backend.service.AuthUserService;
 import com.timo_noordzee.novi.backend.service.ShortcomingService;
 import com.timo_noordzee.novi.backend.util.CustomerTestUtils;
 import com.timo_noordzee.novi.backend.util.ShortcomingTestUtils;
@@ -16,6 +17,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -23,12 +26,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.timo_noordzee.novi.backend.domain.Role.*;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WithMockUser(roles = {ROLE_MECHANIC})
 @WebMvcTest(controllers = ShortcomingController.class)
 public class ShortcomingControllerTest {
 
@@ -39,11 +44,47 @@ public class ShortcomingControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
+    @SuppressWarnings("unused")
+    private AuthUserService authUserService;
+
+    @MockBean
     private ShortcomingService shortcomingService;
 
     private final VehicleTestUtils vehicleTestUtils = new VehicleTestUtils();
     private final CustomerTestUtils customerTestUtils = new CustomerTestUtils();
     private final ShortcomingTestUtils shortcomingTestUtils = new ShortcomingTestUtils();
+
+    @Test
+    @WithMockUser(roles = {ROLE_ADMINISTRATIVE, ROLE_BACKOFFICE, ROLE_CASHIER})
+    void makeGetRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/shortcomings"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = {ROLE_ADMINISTRATIVE, ROLE_BACKOFFICE, ROLE_CASHIER})
+    void makePostRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/shortcomings"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = {ROLE_ADMINISTRATIVE, ROLE_BACKOFFICE, ROLE_CASHIER})
+    void makePutRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        final String id = UUID.randomUUID().toString();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/shortcomings/{id}", id))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = {ROLE_ADMINISTRATIVE, ROLE_BACKOFFICE, ROLE_CASHIER})
+    void makeDeleteRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        final String id = UUID.randomUUID().toString();
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/shortcomings/{id}", id))
+                .andExpect(status().isForbidden());
+    }
 
     @Test
     void getAllReturnsListOfShortcomings() throws Exception {
@@ -100,7 +141,7 @@ public class ShortcomingControllerTest {
         final String payload = objectMapper.writeValueAsString(createShortcomingDto);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/shortcomings")
-                        .contentType("application/json")
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(payload))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.description").isNotEmpty())
@@ -117,7 +158,7 @@ public class ShortcomingControllerTest {
         final String payload = objectMapper.writeValueAsString(createShortcomingDto);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/shortcomings")
-                        .contentType("application/json")
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(payload))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", Is.is(shortcomingEntity.getId().toString())))
@@ -142,7 +183,7 @@ public class ShortcomingControllerTest {
         when(shortcomingService.update(any(String.class), any(UpdateShortcomingDto.class))).thenReturn(shortcomingEntity);
 
         mockMvc.perform(MockMvcRequestBuilders.put("/shortcomings/{id}", id)
-                        .contentType("application/json")
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(payload))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", Is.is(shortcomingEntity.getId().toString())))

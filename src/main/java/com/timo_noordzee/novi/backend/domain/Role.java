@@ -12,10 +12,16 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public enum Role {
     ADMIN("admin"),
-    BACKOFFICE("backoffice"),
-    MECHANIC("mechanic"),
     ADMINISTRATIVE("administrative"),
-    CASHIER("cashier");
+    BACKOFFICE("backoffice"),
+    CASHIER("cashier"),
+    MECHANIC("mechanic");
+
+    public static final String ROLE_ADMIN = "ADMIN";
+    public static final String ROLE_ADMINISTRATIVE = "ADMINISTRATIVE";
+    public static final String ROLE_BACKOFFICE = "BACKOFFICE";
+    public static final String ROLE_CASHIER = "CASHIER";
+    public static final String ROLE_MECHANIC = "MECHANIC";
 
     private final String value;
 

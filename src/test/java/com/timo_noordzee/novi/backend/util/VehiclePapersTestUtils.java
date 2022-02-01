@@ -5,6 +5,7 @@ import com.timo_noordzee.novi.backend.data.VehiclePapersEntity;
 import com.timo_noordzee.novi.backend.dto.CreateVehiclePapersDto;
 import com.timo_noordzee.novi.backend.projection.VehiclePapersWithoutDataProjection;
 import net.datafaker.Faker;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.Date;
@@ -28,7 +29,7 @@ public class VehiclePapersTestUtils {
         return VehiclePapersEntity.builder()
                 .id(UUID.randomUUID())
                 .name(faker.file().fileName())
-                .type("application/pdf")
+                .type(MediaType.APPLICATION_PDF_VALUE)
                 .data(faker.lorem().paragraph().getBytes())
                 .uploadedAt(faker.date().past(10, TimeUnit.DAYS))
                 .vehicle(vehicleEntity)
@@ -39,7 +40,7 @@ public class VehiclePapersTestUtils {
         return VehiclePapersEntity.builder()
                 .id(UUID.randomUUID())
                 .name(faker.file().fileName())
-                .type("application/pdf")
+                .type(MediaType.APPLICATION_PDF_VALUE)
                 .uploadedAt(faker.date().past(10, TimeUnit.DAYS))
                 .build();
     }
@@ -47,14 +48,14 @@ public class VehiclePapersTestUtils {
     public CreateVehiclePapersDto generateMockCreateDto(final String vehicleId) {
         return CreateVehiclePapersDto.builder()
                 .name(faker.file().fileName())
-                .type("application/pdf")
+                .type(MediaType.APPLICATION_PDF_VALUE)
                 .data(faker.lorem().paragraph().getBytes())
                 .vehicleId(vehicleId)
                 .build();
     }
 
-    public MockMultipartFile generateMockMultipartFile(final String type) {
-        return new MockMultipartFile("file", generateMockFileName(), type, faker.lorem().paragraph().getBytes());
+    public MockMultipartFile generateMockMultipartFile(final MediaType type) {
+        return new MockMultipartFile("file", generateMockFileName(), type.toString(), faker.lorem().paragraph().getBytes());
     }
 
     public VehiclePapersWithoutDataProjection generateMockVehiclePapersWithoutDataProjection() {
@@ -74,7 +75,7 @@ public class VehiclePapersTestUtils {
 
             @Override
             public String getType() {
-                return "application/pdf";
+                return MediaType.APPLICATION_PDF_VALUE;
             }
 
             @Override

@@ -9,6 +9,7 @@ import com.timo_noordzee.novi.backend.dto.UpdateVehicleDto;
 import com.timo_noordzee.novi.backend.exception.EntityNotFoundException;
 import com.timo_noordzee.novi.backend.exception.ForbiddenFileTypeException;
 import com.timo_noordzee.novi.backend.exception.LicenseTakenException;
+import com.timo_noordzee.novi.backend.service.AuthUserService;
 import com.timo_noordzee.novi.backend.service.VehiclePapersService;
 import com.timo_noordzee.novi.backend.service.VehicleService;
 import com.timo_noordzee.novi.backend.util.CustomerTestUtils;
@@ -19,7 +20,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -30,12 +33,14 @@ import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
+import static com.timo_noordzee.novi.backend.domain.Role.*;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WithMockUser(roles = {ROLE_ADMINISTRATIVE})
 @WebMvcTest(controllers = VehicleController.class)
 public class VehicleControllerTest {
 
@@ -46,6 +51,10 @@ public class VehicleControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
+    @SuppressWarnings("unused")
+    private AuthUserService authUserService;
+
+    @MockBean
     private VehicleService vehicleService;
 
     @MockBean
@@ -54,6 +63,38 @@ public class VehicleControllerTest {
     private final VehicleTestUtils vehicleTestUtils = new VehicleTestUtils();
     private final CustomerTestUtils customerTestUtils = new CustomerTestUtils();
     private final VehiclePapersTestUtils vehiclePapersTestUtils = new VehiclePapersTestUtils();
+
+    @Test
+    @WithMockUser(roles = {ROLE_BACKOFFICE, ROLE_CASHIER})
+    void makeGetRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/vehicles"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = {ROLE_BACKOFFICE, ROLE_CASHIER, ROLE_MECHANIC})
+    void makePostRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/vehicles"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = {ROLE_BACKOFFICE, ROLE_CASHIER, ROLE_MECHANIC})
+    void makePutRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        final String id = UUID.randomUUID().toString();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/vehicles/{id}", id))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = {ROLE_BACKOFFICE, ROLE_CASHIER, ROLE_MECHANIC})
+    void makeDeleteRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        final String id = UUID.randomUUID().toString();
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/vehicles/{id}", id))
+                .andExpect(status().isForbidden());
+    }
 
     @Test
     void getAllReturnsArrayOfVehicles() throws Exception {
@@ -91,10 +132,11 @@ public class VehicleControllerTest {
         final CreateVehicleDto createVehicleDto = CreateVehicleDto.builder()
                 .year(0)
                 .build();
+        final String payload = objectMapper.writeValueAsString(createVehicleDto);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/vehicles")
-                        .content(objectMapper.writeValueAsString(createVehicleDto))
-                        .contentType("application/json"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(payload))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.vin").isNotEmpty())
                 .andExpect(jsonPath("$.license").isNotEmpty())
@@ -107,12 +149,13 @@ public class VehicleControllerTest {
     @Test
     void addingWithTakenLicenseReturnsEmailTakenException() throws Exception {
         final CreateVehicleDto createVehicleDto = vehicleTestUtils.generateMockCreateDto(UUID.randomUUID());
+        final String payload = objectMapper.writeValueAsString(createVehicleDto);
         when(vehicleService.add(any(CreateVehicleDto.class)))
                 .thenThrow(new LicenseTakenException(createVehicleDto.getLicense()));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/vehicles")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(createVehicleDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(payload))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorCode", Is.is(LicenseTakenException.ERROR_CODE)));
     }
@@ -122,12 +165,13 @@ public class VehicleControllerTest {
         final CustomerEntity customerEntity = customerTestUtils.generateMockEntity();
         final VehicleEntity vehicleEntity = vehicleTestUtils.generateMockEntity(customerEntity);
         final CreateVehicleDto createVehicleDto = vehicleTestUtils.generateMockCreateDto(customerEntity.getId());
+        final String payload = objectMapper.writeValueAsString(createVehicleDto);
         when(vehicleService.add(any(CreateVehicleDto.class))).thenReturn(vehicleEntity);
 
         final ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
                 .post("/vehicles")
-                .contentType("application/json")
-                .content(objectMapper.writeValueAsString(createVehicleDto)));
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(payload));
 
         resultActions.andExpect(status().isCreated());
         assertResultMatchesEntity(resultActions, vehicleEntity);
@@ -136,14 +180,15 @@ public class VehicleControllerTest {
     @Test
     void updatingWithValidPayloadReturnsUpdatedVehicle() throws Exception {
         final UpdateVehicleDto updateVehicleDto = vehicleTestUtils.generateMockUpdateDto();
+        final String payload = objectMapper.writeValueAsString(updateVehicleDto);
         final CustomerEntity customerEntity = customerTestUtils.generateMockEntity();
         final VehicleEntity vehicleEntity = vehicleTestUtils.generateMockEntity(customerEntity);
         when(vehicleService.update(any(String.class), any(UpdateVehicleDto.class))).thenReturn(vehicleEntity);
 
         final ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
                 .put("/vehicles/{id}", vehicleEntity.getVin())
-                .contentType("application/json")
-                .content(objectMapper.writeValueAsString(updateVehicleDto)));
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(payload));
 
         resultActions.andExpect(status().isOk());
         assertResultMatchesEntity(resultActions, vehicleEntity);
@@ -165,9 +210,10 @@ public class VehicleControllerTest {
 
     @Test
     void addingVehiclePapersWithInvalidContentTypeReturnsForbiddenFileTypeException() throws Exception {
-        final MockMultipartFile multipartFile = vehiclePapersTestUtils.generateMockMultipartFile("application/png");
+        final MockMultipartFile multipartFile = vehiclePapersTestUtils.generateMockMultipartFile(MediaType.IMAGE_PNG);
         final VehicleEntity vehicleEntity = vehicleTestUtils.generateMockEntity();
-        when(vehiclePapersService.add(any(String.class), any(MultipartFile.class))).thenThrow(new ForbiddenFileTypeException("application/png"));
+        when(vehiclePapersService.add(any(String.class), any(MultipartFile.class)))
+                .thenThrow(new ForbiddenFileTypeException(MediaType.IMAGE_PNG_VALUE));
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/vehicles/{id}/papers", vehicleEntity.getVin())
                         .file(multipartFile))
@@ -180,7 +226,7 @@ public class VehicleControllerTest {
         final String vehicleId = vehicleTestUtils.randomVin();
         when(vehiclePapersService.add(any(String.class), any(MultipartFile.class)))
                 .thenThrow(new EntityNotFoundException(vehicleId, VehicleEntity.class.getSimpleName()));
-        final MockMultipartFile multipartFile = vehiclePapersTestUtils.generateMockMultipartFile("application/pdf");
+        final MockMultipartFile multipartFile = vehiclePapersTestUtils.generateMockMultipartFile(MediaType.APPLICATION_PDF);
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/vehicles/{id}/papers", vehicleId)
                         .file(multipartFile))
@@ -192,7 +238,7 @@ public class VehicleControllerTest {
     void addingValidVehiclePapersToExistingVehicleReturnsVehiclePapersEntity() throws Exception {
         final VehicleEntity vehicleEntity = vehicleTestUtils.generateMockEntity();
         final VehiclePapersEntity vehiclePapersEntity = vehiclePapersTestUtils.generateMockEntity(vehicleEntity);
-        final MockMultipartFile multipartFile = vehiclePapersTestUtils.generateMockMultipartFile("application/pdf");
+        final MockMultipartFile multipartFile = vehiclePapersTestUtils.generateMockMultipartFile(MediaType.APPLICATION_PDF);
         when(vehiclePapersService.add(any(String.class), any(MultipartFile.class))).thenReturn(vehiclePapersEntity);
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/vehicles/{id}/papers", vehicleEntity.getVin())

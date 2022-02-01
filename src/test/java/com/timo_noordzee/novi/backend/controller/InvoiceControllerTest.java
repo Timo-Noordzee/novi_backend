@@ -7,10 +7,9 @@ import com.timo_noordzee.novi.backend.dto.CreateInvoiceDto;
 import com.timo_noordzee.novi.backend.dto.UpdateInvoiceDto;
 import com.timo_noordzee.novi.backend.exception.EntityNotFoundException;
 import com.timo_noordzee.novi.backend.exception.UnknownStatusException;
+import com.timo_noordzee.novi.backend.service.AuthUserService;
 import com.timo_noordzee.novi.backend.service.InvoiceService;
-import com.timo_noordzee.novi.backend.util.CustomerTestUtils;
 import com.timo_noordzee.novi.backend.util.InvoiceTestUtils;
-import com.timo_noordzee.novi.backend.util.VehicleTestUtils;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -27,11 +26,13 @@ import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
+import static com.timo_noordzee.novi.backend.domain.Role.*;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@WithMockUser(roles = {ROLE_CASHIER})
 @WebMvcTest(controllers = InvoiceController.class)
 public class InvoiceControllerTest {
 
@@ -42,11 +43,45 @@ public class InvoiceControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
+    @SuppressWarnings("unused")
+    private AuthUserService authUserService;
+
+    @MockBean
     private InvoiceService invoiceService;
 
-    private final VehicleTestUtils vehicleTestUtils = new VehicleTestUtils();
-    private final CustomerTestUtils customerTestUtils = new CustomerTestUtils();
     private final InvoiceTestUtils invoiceTestUtils = new InvoiceTestUtils();
+
+    @Test
+    @WithMockUser(roles = {ROLE_ADMINISTRATIVE, ROLE_BACKOFFICE, ROLE_MECHANIC})
+    void makeGetRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/invoices"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = {ROLE_ADMINISTRATIVE, ROLE_BACKOFFICE, ROLE_MECHANIC})
+    void makePostRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/invoices"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = {ROLE_ADMINISTRATIVE, ROLE_BACKOFFICE, ROLE_MECHANIC})
+    void makePutRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        final String id = UUID.randomUUID().toString();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/invoices/{id}", id))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = {ROLE_ADMINISTRATIVE, ROLE_BACKOFFICE, ROLE_MECHANIC})
+    void makeDeleteRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        final String id = UUID.randomUUID().toString();
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/invoices/{id}", id))
+                .andExpect(status().isForbidden());
+    }
 
     @Test
     void getAllReturnsListWithoutDataField() throws Exception {
