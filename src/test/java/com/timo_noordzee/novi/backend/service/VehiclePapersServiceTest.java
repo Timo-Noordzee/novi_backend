@@ -23,6 +23,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -65,7 +66,7 @@ public class VehiclePapersServiceTest {
 
     @Test
     void contentTypeIsNotApplicationPdfThrowsForbiddenFileException() {
-        final MultipartFile multipartFile = vehiclePapersTestUtils.generateMockMultipartFile("application/png");
+        final MultipartFile multipartFile = vehiclePapersTestUtils.generateMockMultipartFile(MediaType.IMAGE_PNG);
         final String vehicleId = vehicleTestUtils.randomVin();
 
         assertThrows(ForbiddenFileTypeException.class, () -> vehiclePapersService.add(vehicleId, multipartFile));
@@ -73,7 +74,7 @@ public class VehiclePapersServiceTest {
 
     @Test
     void addingForNonexistentVehicleThrowsEntityNotFoundException() {
-        final MultipartFile multipartFile = vehiclePapersTestUtils.generateMockMultipartFile("application/pdf");
+        final MultipartFile multipartFile = vehiclePapersTestUtils.generateMockMultipartFile(MediaType.APPLICATION_PDF);
         when(vehicleRepository.findById(any(String.class), any(EntityGraph.class))).thenReturn(Optional.empty());
         final String vehicleId = vehicleTestUtils.randomVin();
 
@@ -84,7 +85,7 @@ public class VehiclePapersServiceTest {
     void addValidFileForExistingVehicleReturnsVehiclePapersEntity() throws IOException {
         final VehicleEntity vehicleEntity = vehicleTestUtils.generateMockEntity();
         when(vehicleRepository.findById(any(String.class), any(EntityGraph.class))).thenReturn(Optional.of(vehicleEntity));
-        final MultipartFile multipartFile = vehiclePapersTestUtils.generateMockMultipartFile("application/pdf");
+        final MultipartFile multipartFile = vehiclePapersTestUtils.generateMockMultipartFile(MediaType.APPLICATION_PDF);
         when(vehiclePapersRepository.save(any(VehiclePapersEntity.class))).thenAnswer(i -> {
             final VehiclePapersEntity vehiclePapersEntity = i.getArgument(0);
             vehiclePapersEntity.setUploadedAt(new Date());
@@ -134,7 +135,7 @@ public class VehiclePapersServiceTest {
 
     @Test
     void addWithInvalidFileThrowsFileUploadException() throws IOException {
-        final MultipartFile multipartFile = vehiclePapersTestUtils.generateMockMultipartFile("application/pdf");
+        final MultipartFile multipartFile = vehiclePapersTestUtils.generateMockMultipartFile(MediaType.APPLICATION_PDF);
         when(mockMultiPartFile.getOriginalFilename()).thenReturn(multipartFile.getOriginalFilename());
         when(mockMultiPartFile.getContentType()).thenReturn(multipartFile.getContentType());
         when(mockMultiPartFile.getBytes()).thenThrow(new IOException());

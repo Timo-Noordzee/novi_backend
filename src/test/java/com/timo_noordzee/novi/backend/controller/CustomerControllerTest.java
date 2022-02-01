@@ -6,6 +6,7 @@ import com.timo_noordzee.novi.backend.dto.CreateCustomerDto;
 import com.timo_noordzee.novi.backend.dto.UpdateCustomerDto;
 import com.timo_noordzee.novi.backend.exception.EmailTakenException;
 import com.timo_noordzee.novi.backend.exception.EntityNotFoundException;
+import com.timo_noordzee.novi.backend.service.AuthUserService;
 import com.timo_noordzee.novi.backend.service.CustomerService;
 import com.timo_noordzee.novi.backend.util.CustomerTestUtils;
 import org.hamcrest.core.Is;
@@ -14,6 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -22,12 +25,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.timo_noordzee.novi.backend.domain.Role.*;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WithMockUser(roles = {ROLE_ADMINISTRATIVE})
 @WebMvcTest(controllers = CustomerController.class)
 public class CustomerControllerTest {
 
@@ -36,6 +41,10 @@ public class CustomerControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    @SuppressWarnings("unused")
+    private AuthUserService authUserService;
 
     @MockBean
     private CustomerService customerService;
@@ -49,6 +58,38 @@ public class CustomerControllerTest {
     void setup() {
         firstCustomer = customerTestUtils.generateMockEntity();
         secondCustomer = customerTestUtils.generateMockEntity();
+    }
+
+    @Test
+    @WithMockUser(roles = {ROLE_BACKOFFICE, ROLE_CASHIER, ROLE_MECHANIC})
+    void makeGetRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/customers"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = {ROLE_BACKOFFICE, ROLE_CASHIER, ROLE_MECHANIC})
+    void makePostRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/customers"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = {ROLE_BACKOFFICE, ROLE_CASHIER, ROLE_MECHANIC})
+    void makePutRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        final String id = UUID.randomUUID().toString();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/customers/{id}", id))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = {ROLE_BACKOFFICE, ROLE_CASHIER, ROLE_MECHANIC})
+    void makeDeleteRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        final String id = UUID.randomUUID().toString();
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/customers/{id}", id))
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -83,10 +124,11 @@ public class CustomerControllerTest {
         final CreateCustomerDto createCustomerDto = CreateCustomerDto.builder()
                 .email("invalid-email")
                 .build();
+        final String payload = objectMapper.writeValueAsString(createCustomerDto);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/customers")
-                        .content(objectMapper.writeValueAsString(createCustomerDto))
-                        .contentType("application/json"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(payload))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.name", Is.is("field is required")))
                 .andExpect(jsonPath("$.surname", Is.is("field is required")))
@@ -105,10 +147,11 @@ public class CustomerControllerTest {
                 .build();
         when(customerService.add(any(CreateCustomerDto.class)))
                 .thenThrow(new EmailTakenException(createCustomerDto.getEmail()));
+        final String payload = objectMapper.writeValueAsString(createCustomerDto);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/customers")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(createCustomerDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(payload))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorCode", Is.is(EmailTakenException.ERROR_CODE)));
     }
@@ -123,11 +166,12 @@ public class CustomerControllerTest {
                 .phone(firstCustomer.getPhone())
                 .build();
         when(customerService.add(any(CreateCustomerDto.class))).thenReturn(firstCustomer);
+        final String payload = objectMapper.writeValueAsString(createCustomerDto);
 
         final ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
                 .post("/customers")
-                .contentType("application/json")
-                .content(objectMapper.writeValueAsString(createCustomerDto)));
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(payload));
 
         resultActions.andExpect(status().isCreated());
         assertResultMatchesEntity(resultActions, firstCustomer);
@@ -138,11 +182,12 @@ public class CustomerControllerTest {
         final String id = UUID.randomUUID().toString();
         final UpdateCustomerDto updateCustomerDto = customerTestUtils.generateMockUpdateDto();
         when(customerService.update(any(String.class), any(UpdateCustomerDto.class))).thenReturn(secondCustomer);
+        final String payload = objectMapper.writeValueAsString(updateCustomerDto);
 
         final ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
                 .put("/customers/{id}", id)
-                .contentType("application/json")
-                .content(objectMapper.writeValueAsString(updateCustomerDto)));
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(payload));
 
         resultActions.andExpect(status().isOk());
         assertResultMatchesEntity(resultActions, secondCustomer);

@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -23,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.UUID;
 
+import static com.timo_noordzee.novi.backend.domain.Role.ROLE_MECHANIC;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -31,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
+@WithMockUser(roles = {ROLE_MECHANIC})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class RepairLineIntegrationTest {
 
@@ -89,7 +93,7 @@ public class RepairLineIntegrationTest {
         final String id = repairEntity.getId().toString();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/repairs/{id}/lines", id)
-                        .contentType("application/json")
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(payload))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorCode", Is.is(OutOfStockException.ERROR_CODE)));
@@ -119,7 +123,7 @@ public class RepairLineIntegrationTest {
         final String id = repairEntity.getId().toString();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/repairs/{id}/lines", id)
-                        .contentType("application/json")
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(payload))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.errorCode", Is.is(EntityNotFoundException.ERROR_CODE)));
@@ -153,7 +157,7 @@ public class RepairLineIntegrationTest {
         final String id = repairEntity.getId().toString();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/repairs/{id}/lines", id)
-                        .contentType("application/json")
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(payload))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", Is.is(repairEntity.getId().toString())))
@@ -196,7 +200,7 @@ public class RepairLineIntegrationTest {
         final String lineId = repairLineEntity.getId().toString();
 
         mockMvc.perform(MockMvcRequestBuilders.put("/repairs/{id}/lines/{lineId}", id, lineId)
-                        .contentType("application/json")
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(payload))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", Is.is(repairLineEntity.getId().toString())))

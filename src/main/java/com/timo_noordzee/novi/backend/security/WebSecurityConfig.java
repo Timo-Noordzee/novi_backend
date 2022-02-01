@@ -31,30 +31,38 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.httpBasic().and()
                 .authorizeRequests()
+//                Employees
                 .antMatchers("/employees/**").hasRole(ROLE_ADMIN)
+//                Customers
                 .antMatchers("/customers/**").hasAnyRole(ROLE_ADMIN, ROLE_ADMINISTRATIVE)
+//                Vehicles
                 .antMatchers(HttpMethod.GET, "/vehicles/**").hasAnyRole(ROLE_ADMIN, ROLE_ADMINISTRATIVE, ROLE_MECHANIC)
                 .antMatchers(HttpMethod.POST, "/vehicles/**").hasAnyRole(ROLE_ADMIN, ROLE_ADMINISTRATIVE)
                 .antMatchers(HttpMethod.PUT, "/vehicles/**").hasAnyRole(ROLE_ADMIN, ROLE_ADMINISTRATIVE)
                 .antMatchers(HttpMethod.DELETE, "/vehicles/**").hasAnyRole(ROLE_ADMIN, ROLE_ADMINISTRATIVE)
+//                Shortcomings
                 .antMatchers("/shortcomings/**").hasAnyRole(ROLE_ADMIN, ROLE_MECHANIC)
+//                VehiclePapers
                 .antMatchers(HttpMethod.GET, "/vehiclePapers/**").hasAnyRole(ROLE_ADMIN, ROLE_ADMINISTRATIVE, ROLE_MECHANIC)
                 .antMatchers(HttpMethod.POST, "/vehiclePapers/**").hasAnyRole(ROLE_ADMIN, ROLE_ADMINISTRATIVE)
                 .antMatchers(HttpMethod.PUT, "/vehiclePapers/**").hasAnyRole(ROLE_ADMIN, ROLE_ADMINISTRATIVE)
                 .antMatchers(HttpMethod.DELETE, "/vehiclePapers/**").hasAnyRole(ROLE_ADMIN, ROLE_ADMINISTRATIVE)
-                .antMatchers("/parts/**").hasAnyRole(ROLE_ADMIN, ROLE_BACKOFFICE)
+//                Parts
                 .antMatchers(HttpMethod.GET, "/parts/**").hasAnyRole(ROLE_ADMIN, ROLE_BACKOFFICE, ROLE_MECHANIC)
                 .antMatchers(HttpMethod.POST, "/parts/**").hasAnyRole(ROLE_ADMIN, ROLE_BACKOFFICE)
                 .antMatchers(HttpMethod.PUT, "/parts/**").hasAnyRole(ROLE_ADMIN, ROLE_BACKOFFICE)
                 .antMatchers(HttpMethod.DELETE, "/parts/**").hasAnyRole(ROLE_ADMIN, ROLE_BACKOFFICE)
+//                Actions
                 .antMatchers(HttpMethod.GET, "/actions/**").hasAnyRole(ROLE_ADMIN, ROLE_BACKOFFICE, ROLE_MECHANIC)
                 .antMatchers(HttpMethod.POST, "/actions/**").hasAnyRole(ROLE_ADMIN, ROLE_BACKOFFICE)
                 .antMatchers(HttpMethod.PUT, "/actions/**").hasAnyRole(ROLE_ADMIN, ROLE_BACKOFFICE)
                 .antMatchers(HttpMethod.DELETE, "/actions/**").hasAnyRole(ROLE_ADMIN, ROLE_BACKOFFICE)
+//                Repairs
                 .antMatchers(HttpMethod.GET, "/repairs/**").hasAnyRole(ROLE_ADMIN, ROLE_MECHANIC, ROLE_ADMINISTRATIVE, ROLE_CASHIER)
                 .antMatchers(HttpMethod.POST, "/repairs/**").hasAnyRole(ROLE_ADMIN, ROLE_MECHANIC, ROLE_ADMINISTRATIVE)
                 .antMatchers(HttpMethod.PUT, "/repairs/**").hasAnyRole(ROLE_ADMIN, ROLE_MECHANIC, ROLE_ADMINISTRATIVE)
                 .antMatchers(HttpMethod.DELETE, "/repairs/**").hasAnyRole(ROLE_ADMIN, ROLE_MECHANIC, ROLE_ADMINISTRATIVE)
+//                Invoices
                 .antMatchers("/invoices/**").hasAnyRole(ROLE_ADMIN, ROLE_CASHIER);
 
         super.configure(http);

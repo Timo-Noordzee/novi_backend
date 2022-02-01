@@ -5,6 +5,7 @@ import com.timo_noordzee.novi.backend.data.PartEntity;
 import com.timo_noordzee.novi.backend.dto.CreatePartDto;
 import com.timo_noordzee.novi.backend.dto.UpdatePartDto;
 import com.timo_noordzee.novi.backend.exception.EntityNotFoundException;
+import com.timo_noordzee.novi.backend.service.AuthUserService;
 import com.timo_noordzee.novi.backend.service.PartService;
 import com.timo_noordzee.novi.backend.util.PartTestUtils;
 import org.hamcrest.core.Is;
@@ -12,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -19,12 +22,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.timo_noordzee.novi.backend.domain.Role.*;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WithMockUser(roles = {ROLE_BACKOFFICE})
 @WebMvcTest(controllers = PartController.class)
 public class PartControllerTest {
 
@@ -35,9 +40,45 @@ public class PartControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
+    @SuppressWarnings("unused")
+    private AuthUserService authUserService;
+
+    @MockBean
     private PartService partService;
 
     private final PartTestUtils partTestUtils = new PartTestUtils();
+
+    @Test
+    @WithMockUser(roles = {ROLE_ADMINISTRATIVE, ROLE_CASHIER})
+    void makeGetRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/parts"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = {ROLE_ADMINISTRATIVE, ROLE_CASHIER, ROLE_MECHANIC})
+    void makePostRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/parts"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = {ROLE_ADMINISTRATIVE, ROLE_CASHIER, ROLE_MECHANIC})
+    void makePutRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        final String id = UUID.randomUUID().toString();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/parts/{id}", id))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = {ROLE_ADMINISTRATIVE, ROLE_CASHIER, ROLE_MECHANIC})
+    void makeDeleteRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        final String id = UUID.randomUUID().toString();
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/parts/{id}", id))
+                .andExpect(status().isForbidden());
+    }
 
     @Test
     void getAllPartsReturnsListOfPartEntities() throws Exception {
@@ -79,7 +120,7 @@ public class PartControllerTest {
         final String payload = objectMapper.writeValueAsString(createPartDto);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/parts")
-                        .contentType("application/json")
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(payload))
                 .andExpect(jsonPath("$.name").isNotEmpty())
                 .andExpect(jsonPath("$.price").isNotEmpty())
@@ -94,7 +135,7 @@ public class PartControllerTest {
         final String payload = objectMapper.writeValueAsString(createPartDto);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/parts")
-                        .contentType("application/json")
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(payload))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", Is.is(partEntity.getId().toString())))
@@ -112,7 +153,7 @@ public class PartControllerTest {
         final String id = partEntity.getId().toString();
 
         mockMvc.perform(MockMvcRequestBuilders.put("/parts/{id}", id)
-                        .contentType("application/json")
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(payload))
                 .andExpect(jsonPath("$.id", Is.is(partEntity.getId().toString())))
                 .andExpect(jsonPath("$.name", Is.is(partEntity.getName())))

@@ -6,6 +6,7 @@ import com.timo_noordzee.novi.backend.dto.CreateEmployeeDto;
 import com.timo_noordzee.novi.backend.dto.UpdateEmployeeDto;
 import com.timo_noordzee.novi.backend.exception.EmailTakenException;
 import com.timo_noordzee.novi.backend.exception.EntityNotFoundException;
+import com.timo_noordzee.novi.backend.service.AuthUserService;
 import com.timo_noordzee.novi.backend.service.EmployeeService;
 import com.timo_noordzee.novi.backend.util.EmployeeTestUtils;
 import org.hamcrest.core.Is;
@@ -14,6 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -22,12 +25,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.timo_noordzee.novi.backend.domain.Role.*;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@WithMockUser(roles = {ROLE_ADMIN})
 @WebMvcTest(controllers = EmployeeController.class)
 public class EmployeeControllerTest {
 
@@ -36,6 +41,10 @@ public class EmployeeControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    @SuppressWarnings("unused")
+    private AuthUserService authUserService;
 
     @MockBean
     private EmployeeService employeeService;
@@ -49,6 +58,38 @@ public class EmployeeControllerTest {
     void setup() {
         firstEmployee = employeeTestUtils.generateMockEntity();
         secondEmployee = employeeTestUtils.generateMockEntity();
+    }
+
+    @Test
+    @WithMockUser(roles = {ROLE_ADMINISTRATIVE, ROLE_BACKOFFICE, ROLE_CASHIER, ROLE_MECHANIC})
+    void makeGetRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/employees"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = {ROLE_ADMINISTRATIVE, ROLE_BACKOFFICE, ROLE_CASHIER, ROLE_MECHANIC})
+    void makePostRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/employees"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = {ROLE_ADMINISTRATIVE, ROLE_BACKOFFICE, ROLE_CASHIER, ROLE_MECHANIC})
+    void makePutRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        final String id = UUID.randomUUID().toString();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/employees/{id}", id))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = {ROLE_ADMINISTRATIVE, ROLE_BACKOFFICE, ROLE_CASHIER, ROLE_MECHANIC})
+    void makeDeleteRequestWithoutRequiredRoleIsForbidden() throws Exception {
+        final String id = UUID.randomUUID().toString();
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/employees/{id}", id))
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -83,8 +124,8 @@ public class EmployeeControllerTest {
     @Test
     void addingWithInvalidPayloadReturnsValidationErrors() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/employees")
-                        .content("{}")
-                        .contentType("application/json"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.name", Is.is("field is required")))
                 .andExpect(jsonPath("$.surname", Is.is("field is required")))
@@ -105,10 +146,11 @@ public class EmployeeControllerTest {
                 .build();
         when(employeeService.add(any(CreateEmployeeDto.class)))
                 .thenThrow(new EmailTakenException(createEmployeeDto.getEmail()));
+        final String payload = objectMapper.writeValueAsString(createEmployeeDto);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/employees")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(createEmployeeDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(payload))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorCode", Is.is(EmailTakenException.ERROR_CODE)));
     }
@@ -119,11 +161,12 @@ public class EmployeeControllerTest {
         final CreateEmployeeDto createEmployeeDto = employeeTestUtils.generateMockCreateDto();
         createEmployeeDto.setId(employeeEntity.getId().toString());
         when(employeeService.add(any(CreateEmployeeDto.class))).thenReturn(employeeEntity);
+        final String payload = objectMapper.writeValueAsString(createEmployeeDto);
 
         final ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
                 .post("/employees")
-                .contentType("application/json")
-                .content(objectMapper.writeValueAsString(createEmployeeDto)));
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(payload));
 
         resultActions.andExpect(status().isCreated());
         resultActions.andExpect(jsonPath("$.id", Is.is(employeeEntity.getId().toString())));
@@ -139,11 +182,12 @@ public class EmployeeControllerTest {
         final String id = UUID.randomUUID().toString();
         final UpdateEmployeeDto updateEmployeeDto = employeeTestUtils.generateMockUpdateDto();
         when(employeeService.update(any(String.class), any(UpdateEmployeeDto.class))).thenReturn(secondEmployee);
+        final String payload = objectMapper.writeValueAsString(updateEmployeeDto);
 
         final ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
                 .put("/employees/{id}", id)
-                .contentType("application/json")
-                .content(objectMapper.writeValueAsString(updateEmployeeDto)));
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(payload));
 
         resultActions.andExpect(status().isOk());
         assertResultMatchesEntity(resultActions, secondEmployee);
