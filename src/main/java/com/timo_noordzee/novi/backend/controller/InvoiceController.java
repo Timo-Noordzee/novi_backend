@@ -31,7 +31,7 @@ public class InvoiceController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(
             @PathVariable("id") final String id,
-            @RequestHeader(value = "Accept", defaultValue = "application/pdf") final String acceptHeader
+            @RequestHeader(value = "Accept", required = false, defaultValue = "application/pdf") final String acceptHeader
     ) {
         final InvoiceEntity invoiceEntity = invoiceService.getById(id);
 
@@ -49,7 +49,7 @@ public class InvoiceController {
     @PostMapping("")
     public ResponseEntity<?> addInvoice(
             @Valid @RequestBody final CreateInvoiceDto createInvoiceDto,
-            @RequestHeader(value = "Accept") final String acceptHeader
+            @RequestHeader(value = "Accept", required = false, defaultValue = "application/pdf") final String acceptHeader
     ) {
         final InvoiceEntity invoiceEntity = invoiceService.add(createInvoiceDto);
         final URI uri = MvcUriComponentsBuilder.fromMethodCall(MvcUriComponentsBuilder.on(InvoiceController.class)

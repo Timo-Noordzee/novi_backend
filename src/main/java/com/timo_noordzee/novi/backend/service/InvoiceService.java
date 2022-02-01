@@ -67,35 +67,36 @@ public class InvoiceService extends BaseRestService<InvoiceEntity, UUID, CreateI
     }
 
     private byte[] generateInvoicePdf(final RepairEntity repairEntity) {
-        final ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
-        templateResolver.setSuffix(".html");
-        templateResolver.setPrefix("templates/");
-        templateResolver.setTemplateMode(TemplateMode.HTML);
-
-        final TemplateEngine templateEngine = new TemplateEngine();
-        templateEngine.setTemplateResolver(templateResolver);
-
-        final List<RepairLineEntity> partLines = repairEntity.getLines().stream()
-                .filter(line -> line.getType() == RepairLineType.PART)
-                .collect(Collectors.toList());
-
-        final List<RepairLineEntity> actionLines = repairEntity.getLines().stream()
-                .filter(line -> line.getType() == RepairLineType.ACTION)
-                .collect(Collectors.toList());
-
-        final double total = repairEntity.getLines().stream().map(RepairLineEntity::getTotalPrice).reduce(0.0, Double::sum);
-
-        final Context context = new Context();
-        context.setVariable("id", repairEntity.getId().toString());
-        context.setVariable("createdAt", new Date());
-        context.setVariable("vehicle", repairEntity.getVehicle());
-        context.setVariable("customer", repairEntity.getVehicle().getOwner());
-        context.setVariable("parts", partLines);
-        context.setVariable("actions", actionLines);
-        context.setVariable("total", total);
-
-        final String html = templateEngine.process("invoice_template", context);
         try (final ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            final ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+            templateResolver.setSuffix(".html");
+            templateResolver.setPrefix("templates/");
+            templateResolver.setTemplateMode(TemplateMode.HTML);
+
+            final TemplateEngine templateEngine = new TemplateEngine();
+            templateEngine.setTemplateResolver(templateResolver);
+
+            final List<RepairLineEntity> partLines = repairEntity.getLines().stream()
+                    .filter(line -> line.getType() == RepairLineType.PART)
+                    .collect(Collectors.toList());
+
+            final List<RepairLineEntity> actionLines = repairEntity.getLines().stream()
+                    .filter(line -> line.getType() == RepairLineType.ACTION)
+                    .collect(Collectors.toList());
+
+            final double total = repairEntity.getLines().stream().map(RepairLineEntity::getTotalPrice).reduce(0.0, Double::sum);
+
+            final Context context = new Context();
+            context.setVariable("id", repairEntity.getId().toString());
+            context.setVariable("createdAt", new Date());
+            context.setVariable("vehicle", repairEntity.getVehicle());
+            context.setVariable("customer", repairEntity.getVehicle().getOwner());
+            context.setVariable("parts", partLines);
+            context.setVariable("actions", actionLines);
+            context.setVariable("total", total);
+
+            final String html = templateEngine.process("invoice_template", context);
+
             final ITextRenderer renderer = new ITextRenderer();
             renderer.setDocumentFromString(html);
             renderer.layout();
