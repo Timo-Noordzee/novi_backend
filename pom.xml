@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.timo_noordzee.novi</groupId>
 	<artifactId>backend</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>Garage backend</name>
 	<description>Integrale eindopdracht Backend Programming o.b.v. voorbeeld garage casus</description>
 	<properties>
