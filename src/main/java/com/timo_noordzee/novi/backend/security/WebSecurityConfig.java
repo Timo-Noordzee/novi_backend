@@ -63,7 +63,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/repairs/**").hasAnyRole(ROLE_ADMIN, ROLE_MECHANIC, ROLE_ADMINISTRATIVE)
                 .antMatchers(HttpMethod.DELETE, "/repairs/**").hasAnyRole(ROLE_ADMIN, ROLE_MECHANIC, ROLE_ADMINISTRATIVE)
 //                Invoices
-                .antMatchers("/invoices/**").hasAnyRole(ROLE_ADMIN, ROLE_CASHIER);
+                .antMatchers("/invoices/**").hasAnyRole(ROLE_ADMIN, ROLE_CASHIER)
+//                Documentation
+                .antMatchers("/v3/**").permitAll()
+                .antMatchers("/swagger-ui/**").permitAll();
 
         super.configure(http);
     }

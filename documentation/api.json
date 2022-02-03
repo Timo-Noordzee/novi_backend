@@ -1,0 +1,2571 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Garage backend",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Generated server url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Action",
+      "description": "Endpoints for managing actions"
+    },
+    {
+      "name": "Invoice",
+      "description": "Endpoints for managing invoices"
+    },
+    {
+      "name": "Employee",
+      "description": "Endpoints for managing `Employee`'s"
+    },
+    {
+      "name": "Part",
+      "description": "Endpoints for managing parts"
+    },
+    {
+      "name": "Shortcoming",
+      "description": "Endpoints for managing `Vehicle` shortcoming"
+    },
+    {
+      "name": "Repair",
+      "description": "Endpoints for managing repairs and repair lines"
+    },
+    {
+      "name": "Vehicle",
+      "description": "Endpoints for managing vehicles"
+    },
+    {
+      "name": "VehiclePapers",
+      "description": "Endpoints for managing Vehicle papers"
+    },
+    {
+      "name": "Customer",
+      "description": "Endpoints for managing customers"
+    }
+  ],
+  "paths": {
+    "/vehicles/{id}": {
+      "get": {
+        "tags": [
+          "Vehicle"
+        ],
+        "summary": "Get a Vehicle by ID",
+        "operationId": "getById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Vehicle",
+              "format": "vin",
+              "example": "SAJWA2GZ0F8V79011",
+              "externalDocs": {
+                "description": "ISO 3779:2009 Road vehicles — Vehicle identification number",
+                "url": "https://www.iso.org/standard/52200.html"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Vehicle"
+        ],
+        "summary": "Update a Vehicle",
+        "operationId": "updateVehicle",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Vehicle",
+              "format": "vin",
+              "example": "SAJWA2GZ0F8V79011",
+              "externalDocs": {
+                "description": "ISO 3779:2009 Road vehicles — Vehicle identification number",
+                "url": "https://www.iso.org/standard/52200.html"
+              }
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateVehicleDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Vehicle"
+        ],
+        "summary": "Delete a Vehicle",
+        "operationId": "deleteById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Vehicle",
+              "format": "vin",
+              "example": "SAJWA2GZ0F8V79011",
+              "externalDocs": {
+                "description": "ISO 3779:2009 Road vehicles — Vehicle identification number",
+                "url": "https://www.iso.org/standard/52200.html"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/shortcomings/{id}": {
+      "get": {
+        "tags": [
+          "Shortcoming"
+        ],
+        "summary": "Get a Shortcoming by ID",
+        "operationId": "getById_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Shortcoming",
+              "example": "b929d3b2-b6e6-4930-96f8-167f32338cc1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShortcomingEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Shortcoming"
+        ],
+        "summary": "Update a Shortcoming",
+        "operationId": "updateShortcoming",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Shortcoming",
+              "example": "b929d3b2-b6e6-4930-96f8-167f32338cc1"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateShortcomingDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShortcomingEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Shortcoming"
+        ],
+        "summary": "Delete a Shortcoming",
+        "operationId": "deleteById_2",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Shortcoming",
+              "example": "b929d3b2-b6e6-4930-96f8-167f32338cc1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShortcomingEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/repairs/{id}": {
+      "get": {
+        "tags": [
+          "Repair"
+        ],
+        "summary": "Get a Repair by ID",
+        "operationId": "getById_2",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Repair",
+              "example": "3f6b0479-ef88-4f63-bd65-af3aa8ad5b72"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepairEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Repair"
+        ],
+        "summary": "Update a Repair",
+        "operationId": "updateRepair",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Repair",
+              "example": "0ec4abcc-f4df-4ef6-ae45-a71ecd05a316"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRepairDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepairEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Repair"
+        ],
+        "summary": "Delete a Repair",
+        "operationId": "deleteById_3",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Repair",
+              "example": "0ec4abcc-f4df-4ef6-ae45-a71ecd05a316"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepairEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/repairs/{id}/lines/{lineId}": {
+      "put": {
+        "tags": [
+          "Repair"
+        ],
+        "summary": "Update a Repair line",
+        "operationId": "updateRepairLine",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Repair",
+              "example": "0ec4abcc-f4df-4ef6-ae45-a71ecd05a316"
+            }
+          },
+          {
+            "name": "lineId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Id of the Repair line",
+              "example": "f5161f7a-427e-46e5-8a60-4825c88584bc"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRepairLineDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepairLineEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Repair"
+        ],
+        "summary": "Delete a Repair line",
+        "operationId": "updateRepairLine_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Repair",
+              "example": "0ec4abcc-f4df-4ef6-ae45-a71ecd05a316"
+            }
+          },
+          {
+            "name": "lineId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Id of the Repair line",
+              "example": "f5161f7a-427e-46e5-8a60-4825c88584bc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepairLineEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parts/{id}": {
+      "get": {
+        "tags": [
+          "Part"
+        ],
+        "summary": "Get a Part by ID",
+        "operationId": "getById_3",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Part",
+              "example": "56c001d1-c169-4f88-9816-693b4927472b"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Part"
+        ],
+        "summary": "Update a Part",
+        "operationId": "updatePart",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Part",
+              "example": "56c001d1-c169-4f88-9816-693b4927472b"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePartDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Part"
+        ],
+        "summary": "Delete a Part",
+        "operationId": "deleteById_4",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Part",
+              "example": "56c001d1-c169-4f88-9816-693b4927472b"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/invoices/{id}": {
+      "get": {
+        "tags": [
+          "Invoice"
+        ],
+        "summary": "Get an Invoice by ID",
+        "operationId": "getById_4",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Invoice",
+              "example": "3f6b0479-ef88-4f63-bd65-af3aa8ad5b72"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "application/pdf"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Invoice"
+        ],
+        "summary": "Update an Invoice",
+        "operationId": "updateInvoice",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Invoice",
+              "example": "3f6b0479-ef88-4f63-bd65-af3aa8ad5b72"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateInvoiceDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Invoice"
+        ],
+        "summary": "Delete an Invoice",
+        "operationId": "deleteById_5",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Invoice",
+              "example": "3f6b0479-ef88-4f63-bd65-af3aa8ad5b72"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/employees/{id}": {
+      "get": {
+        "tags": [
+          "Employee"
+        ],
+        "summary": "Get an Employee by ID",
+        "operationId": "getById_5",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Employee",
+              "example": "41842996-06ee-4c3c-990f-376a47c2342e"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployeeEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Employee"
+        ],
+        "summary": "Update an Employee",
+        "operationId": "updateEmployee",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Employee",
+              "example": "41842996-06ee-4c3c-990f-376a47c2342e"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEmployeeDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployeeEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Employee"
+        ],
+        "summary": "Delete an Employee",
+        "operationId": "deleteById_6",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Employee",
+              "example": "41842996-06ee-4c3c-990f-376a47c2342e"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployeeEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers/{id}": {
+      "get": {
+        "tags": [
+          "Customer"
+        ],
+        "summary": "Get Customer by ID",
+        "operationId": "getById_6",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Customer",
+              "example": "f1c1ed01-6a3d-41f8-8054-ecdaf23dbecf"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Customer"
+        ],
+        "summary": "Update a Customer",
+        "operationId": "updateCustomer",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Customer",
+              "example": "f1c1ed01-6a3d-41f8-8054-ecdaf23dbecf"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCustomerDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Customer"
+        ],
+        "summary": "Delete a Customer",
+        "operationId": "deleteById_7",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Customer",
+              "example": "f1c1ed01-6a3d-41f8-8054-ecdaf23dbecf"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/actions/{id}": {
+      "get": {
+        "tags": [
+          "Action"
+        ],
+        "summary": "Get an Action by ID",
+        "operationId": "getById_7",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Action",
+              "example": "869f7f98-11b7-480c-adb1-4fbadee49edc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Action"
+        ],
+        "summary": "Update an Action",
+        "operationId": "updateAction",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Action",
+              "example": "869f7f98-11b7-480c-adb1-4fbadee49edc"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateActionDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionEntity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Action"
+        ],
+        "summary": "Delete an Action",
+        "operationId": "deleteById_8",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Action",
+              "example": "869f7f98-11b7-480c-adb1-4fbadee49edc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vehicles": {
+      "get": {
+        "tags": [
+          "Vehicle"
+        ],
+        "summary": "Get all Vehicles",
+        "operationId": "getAll",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VehicleEntity"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Vehicle"
+        ],
+        "summary": "Add a new Vehicle",
+        "operationId": "addVehicle",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateVehicleDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vehicles/{id}/papers": {
+      "get": {
+        "tags": [
+          "Vehicle"
+        ],
+        "summary": "Get files for a Vehicle",
+        "operationId": "getPapersForVehicle",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Vehicle",
+              "format": "vin",
+              "example": "SAJWA2GZ0F8V79011",
+              "externalDocs": {
+                "description": "ISO 3779:2009 Road vehicles — Vehicle identification number",
+                "url": "https://www.iso.org/standard/52200.html"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VehiclePapersEntity"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Vehicle"
+        ],
+        "summary": "Add a file to a Vehicle",
+        "operationId": "addVehiclePapers",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Vehicle",
+              "format": "vin",
+              "example": "SAJWA2GZ0F8V79011",
+              "externalDocs": {
+                "description": "ISO 3779:2009 Road vehicles — Vehicle identification number",
+                "url": "https://www.iso.org/standard/52200.html"
+              }
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehiclePapersEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/shortcomings": {
+      "get": {
+        "tags": [
+          "Shortcoming"
+        ],
+        "summary": "Get all Shortcomings",
+        "operationId": "getAll_2",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ShortcomingEntity"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Shortcoming"
+        ],
+        "summary": "Add a new Shortcoming",
+        "operationId": "addShortcoming",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateShortcomingDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShortcomingEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/repairs": {
+      "get": {
+        "tags": [
+          "Repair"
+        ],
+        "summary": "Get all Repairs",
+        "operationId": "getAll_3",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RepairEntity"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Repair"
+        ],
+        "summary": "Add a new Repair",
+        "operationId": "addRepair",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRepairDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepairEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/repairs/{id}/lines": {
+      "post": {
+        "tags": [
+          "Repair"
+        ],
+        "summary": "Add a line to a Repair",
+        "operationId": "addLinesToRepair",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Repair",
+              "example": "0ec4abcc-f4df-4ef6-ae45-a71ecd05a316"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddRepairLinesDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepairEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parts": {
+      "get": {
+        "tags": [
+          "Part"
+        ],
+        "summary": "Get all Parts",
+        "operationId": "getAll_4",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PartEntity"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Part"
+        ],
+        "summary": "Add a new Part",
+        "operationId": "addPart",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePartDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/invoices": {
+      "get": {
+        "tags": [
+          "Invoice"
+        ],
+        "summary": "Get all Invoices",
+        "operationId": "getAll_5",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InvoiceEntity"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Invoice"
+        ],
+        "summary": "Add a new Invoice",
+        "operationId": "addInvoice",
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "application/pdf"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInvoiceDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/employees": {
+      "get": {
+        "tags": [
+          "Employee"
+        ],
+        "summary": "Get all Employees",
+        "operationId": "getAll_6",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EmployeeEntity"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Employee"
+        ],
+        "summary": "Add a new Employee",
+        "operationId": "addEmployee",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEmployeeDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployeeEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers": {
+      "get": {
+        "tags": [
+          "Customer"
+        ],
+        "summary": "Get all Customers",
+        "operationId": "getAll_7",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CustomerEntity"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Customer"
+        ],
+        "summary": "Add a new Customer",
+        "operationId": "addCustomer",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomerDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/actions": {
+      "get": {
+        "tags": [
+          "Action"
+        ],
+        "summary": "Get all Actions",
+        "operationId": "getAll_8",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActionEntity"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Action"
+        ],
+        "summary": "Add a new Action",
+        "operationId": "addAction",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateActionDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vehiclePapers": {
+      "get": {
+        "tags": [
+          "VehiclePapers"
+        ],
+        "summary": "Get all Vehicle papers",
+        "operationId": "getAll_1",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VehiclePapersEntity"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vehiclePapers/{id}": {
+      "get": {
+        "tags": [
+          "VehiclePapers"
+        ],
+        "summary": "Get Vehicle papers by ID",
+        "operationId": "getFile",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Vehicle papers",
+              "example": "0b87c428-4750-43c8-a281-c6703f9e6dda"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "byte"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "VehiclePapers"
+        ],
+        "summary": "Delete Vehicle papers",
+        "operationId": "deleteById_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the Vehicle papers",
+              "example": "0b87c428-4750-43c8-a281-c6703f9e6dda"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehiclePapersEntity"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UpdateVehicleDto": {
+        "type": "object",
+        "properties": {
+          "license": {
+            "type": "string",
+            "format": "license",
+            "example": "54-PR-VB"
+          },
+          "brand": {
+            "type": "string",
+            "example": "Peugeot"
+          },
+          "make": {
+            "type": "string",
+            "example": "206"
+          },
+          "year": {
+            "minimum": 1886,
+            "type": "integer",
+            "format": "int32",
+            "example": 2004
+          },
+          "customerId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "8102cd51-1f2f-4051-974f-b20dda3ea5ec"
+          }
+        }
+      },
+      "CustomerEntity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "07860e82-a422-4d97-a7fb-270e3cf0cd2c"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "luca.van.beek@klant.novi-garage.nl"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+31 6 23456789"
+          },
+          "name": {
+            "type": "string",
+            "example": "Luca"
+          },
+          "surname": {
+            "type": "string",
+            "example": "van Beek"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "vehicles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VehicleEntity"
+            }
+          }
+        }
+      },
+      "RepairEntity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "0ec4abcc-f4df-4ef6-ae45-a71ecd05a316"
+          },
+          "remarks": {
+            "type": "string",
+            "example": "Klant gaat niet akkoord met de reparatie"
+          },
+          "status": {
+            "type": "string",
+            "example": "1",
+            "enum": [
+              "0",
+              "1",
+              "2",
+              "3",
+              "0",
+              "1",
+              "2",
+              "3'"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RepairLineEntity"
+            }
+          }
+        }
+      },
+      "RepairLineEntity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "ceb26362-598b-4d47-b70d-b8a4208c0b4d"
+          },
+          "name": {
+            "type": "string",
+            "example": "Ruitenwisser"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int32",
+            "example": 2
+          },
+          "price": {
+            "type": "number",
+            "format": "double",
+            "example": 20.13
+          },
+          "type": {
+            "type": "string",
+            "example": "0",
+            "enum": [
+              "0",
+              "1",
+              "0",
+              "1"
+            ]
+          },
+          "totalPrice": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "ShortcomingEntity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "f12163d8-d3dc-4d58-8960-2c3100545f6a"
+          },
+          "description": {
+            "type": "string",
+            "example": "Remschijven kapot"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "vehicle": {
+            "$ref": "#/components/schemas/VehicleEntity"
+          }
+        }
+      },
+      "VehicleEntity": {
+        "type": "object",
+        "properties": {
+          "vin": {
+            "type": "string",
+            "format": "vin",
+            "example": "5J6RE4H42BL073812",
+            "externalDocs": {
+              "description": "ISO 3779:2009 Road vehicles — Vehicle identification number",
+              "url": "https://www.iso.org/standard/52200.html"
+            }
+          },
+          "license": {
+            "type": "string",
+            "format": "license",
+            "example": "73-DT-BP"
+          },
+          "brand": {
+            "type": "string",
+            "example": "Opel"
+          },
+          "make": {
+            "type": "string",
+            "example": "Corsa B"
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1999
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/CustomerEntity"
+          },
+          "shortcomings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShortcomingEntity"
+            }
+          },
+          "papers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VehiclePapersEntity"
+            }
+          },
+          "vehicles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RepairEntity"
+            }
+          }
+        }
+      },
+      "VehiclePapersEntity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "972f07aa-75ba-4047-83f9-f881947560ff"
+          },
+          "name": {
+            "type": "string",
+            "example": "KentekenCheck 73-DT-BP.pdf"
+          },
+          "type": {
+            "type": "string",
+            "example": "application/pdf"
+          },
+          "data": {
+            "type": "array",
+            "format": "byte",
+            "items": {
+              "type": "string",
+              "format": "byte"
+            }
+          },
+          "uploadedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "UpdateShortcomingDto": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "example": "De lamp links achter werkt niet meer"
+          }
+        }
+      },
+      "UpdateRepairDto": {
+        "type": "object",
+        "properties": {
+          "remarks": {
+            "type": "string",
+            "example": "Reparatie voltooid, alle tekortkomingen zijn opgelost"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "example": 3,
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          }
+        }
+      },
+      "UpdateRepairLineDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Installeren van nieuwe software"
+          },
+          "price": {
+            "minimum": 0,
+            "type": "number",
+            "format": "double",
+            "example": 29.99
+          },
+          "amount": {
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32",
+            "example": 1
+          },
+          "type": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1,
+            "enum": [
+              0,
+              null
+            ]
+          }
+        }
+      },
+      "UpdatePartDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Remschijf"
+          },
+          "price": {
+            "minimum": 0,
+            "type": "number",
+            "format": "double",
+            "example": 79.95
+          },
+          "stock": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          }
+        }
+      },
+      "PartEntity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "f71f2846-4e53-45ac-b8c0-6edb93728698"
+          },
+          "name": {
+            "type": "string",
+            "example": "Remblokken"
+          },
+          "price": {
+            "type": "number",
+            "format": "double",
+            "example": 34.04
+          },
+          "stock": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10
+          }
+        }
+      },
+      "UpdateInvoiceDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1,
+            "enum": [
+              1,
+              2
+            ]
+          },
+          "paidAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "InvoiceEntity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "1706b5c5-da10-42d9-b450-c0c9810d18d4"
+          },
+          "paidAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "example": "1",
+            "enum": [
+              "0",
+              "1",
+              "0",
+              "1"
+            ]
+          },
+          "data": {
+            "type": "array",
+            "format": "byte",
+            "nullable": true,
+            "items": {
+              "type": "string",
+              "format": "byte",
+              "nullable": true
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "UpdateEmployeeDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Marko"
+          },
+          "surname": {
+            "type": "string",
+            "example": "Valder"
+          },
+          "password": {
+            "type": "string",
+            "example": "M5sj-qJE"
+          },
+          "role": {
+            "type": "string",
+            "example": "admin",
+            "enum": [
+              "admin",
+              "administrative",
+              "backoffice",
+              "cashier",
+              "mechanic"
+            ]
+          }
+        }
+      },
+      "EmployeeEntity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "41842996-06ee-4c3c-990f-376a47c2342e"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "arend.de.porter@novi-garage.nl"
+          },
+          "name": {
+            "type": "string",
+            "example": "Arend"
+          },
+          "surname": {
+            "type": "string",
+            "example": "de Porter"
+          },
+          "role": {
+            "type": "string",
+            "example": "backoffice",
+            "enum": [
+              "admin",
+              "administrative",
+              "backoffice",
+              "cashier",
+              "mechanic",
+              "admin",
+              "administrative",
+              "backoffice",
+              "cashier",
+              "mechanic"
+            ]
+          }
+        }
+      },
+      "UpdateCustomerDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Ingrid"
+          },
+          "surname": {
+            "type": "string",
+            "example": "de Vries"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "ingrid.de.vries@klant.novi-garage.nl"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+31 6 87654321"
+          }
+        }
+      },
+      "UpdateActionDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Remschrijven vervangen"
+          },
+          "price": {
+            "minimum": 0,
+            "type": "number",
+            "format": "double",
+            "example": 44.99
+          }
+        }
+      },
+      "ActionEntity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "1f48d182-35e2-497e-8725-a9c7f7e9f7c9"
+          },
+          "name": {
+            "type": "string",
+            "example": "Koppeling vervangen"
+          },
+          "price": {
+            "type": "number",
+            "format": "double",
+            "example": 199.95
+          }
+        }
+      },
+      "CreateVehicleDto": {
+        "required": [
+          "brand",
+          "customerId",
+          "license",
+          "make",
+          "vin",
+          "year"
+        ],
+        "type": "object",
+        "properties": {
+          "vin": {
+            "type": "string",
+            "format": "vin",
+            "example": "1FTPW14V87FA46384",
+            "externalDocs": {
+              "description": "ISO 3779:2009 Road vehicles — Vehicle identification number",
+              "url": "https://www.iso.org/standard/52200.html"
+            }
+          },
+          "license": {
+            "type": "string",
+            "format": "license",
+            "example": "G-373-LB"
+          },
+          "brand": {
+            "type": "string",
+            "example": "BMW"
+          },
+          "make": {
+            "type": "string",
+            "example": "330I"
+          },
+          "year": {
+            "maximum": 2032,
+            "minimum": 1886,
+            "type": "integer",
+            "format": "int32",
+            "example": 2019
+          },
+          "customerId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "8102cd51-1f2f-4051-974f-b20dda3ea5ec"
+          }
+        }
+      },
+      "CreateShortcomingDto": {
+        "required": [
+          "description",
+          "vehicleId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "e3604bc3-8859-4e6e-874a-316370d33f5d"
+          },
+          "description": {
+            "type": "string",
+            "example": "De remschijven zijn versleten"
+          },
+          "vehicleId": {
+            "type": "string",
+            "format": "vin",
+            "example": "1FTPW14V87FA46384",
+            "externalDocs": {
+              "description": "ISO 3779:2009 Road vehicles — Vehicle identification number",
+              "url": "https://www.iso.org/standard/52200.html"
+            }
+          }
+        }
+      },
+      "CreateRepairDto": {
+        "required": [
+          "vehicleId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "21bdc260-d585-41e8-950d-56f5ea9208cc"
+          },
+          "remarks": {
+            "type": "string",
+            "example": "De klant is niet akkoord gegaan met de reparatie, omdat de kosten te hoog zijn"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1,
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "vehicleId": {
+            "type": "string",
+            "format": "vin",
+            "example": "1FTPW14V87FA46384",
+            "externalDocs": {
+              "description": "ISO 3779:2009 Road vehicles — Vehicle identification number",
+              "url": "https://www.iso.org/standard/52200.html"
+            }
+          }
+        }
+      },
+      "Action": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "dcfca82f-c4b2-4b5d-ba42-7ac1729ef4df"
+          }
+        }
+      },
+      "AddRepairLinesDto": {
+        "type": "object",
+        "properties": {
+          "parts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Part"
+            }
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Action"
+            }
+          },
+          "custom": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Custom"
+            }
+          }
+        }
+      },
+      "Custom": {
+        "required": [
+          "name",
+          "price",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Software updaten"
+          },
+          "price": {
+            "minimum": 0,
+            "type": "number",
+            "format": "double",
+            "example": 29.99
+          },
+          "type": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1,
+            "enum": [
+              0,
+              1
+            ]
+          }
+        }
+      },
+      "Part": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "f71f2846-4e53-45ac-b8c0-6edb93728698"
+          }
+        }
+      },
+      "CreatePartDto": {
+        "required": [
+          "name",
+          "price"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "1bde1162-7da8-4a5b-b76c-becd8b7f9173"
+          },
+          "name": {
+            "type": "string",
+            "example": "Motorblok"
+          },
+          "price": {
+            "minimum": 0,
+            "type": "number",
+            "format": "double",
+            "example": 59.99
+          },
+          "stock": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "example": 5
+          }
+        }
+      },
+      "CreateInvoiceDto": {
+        "required": [
+          "repairId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "6f563bf0-e1ab-4e63-b721-3d2c47b28963"
+          },
+          "paidAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1,
+            "enum": [
+              1,
+              2
+            ]
+          },
+          "repairId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "21bdc260-d585-41e8-950d-56f5ea9208cc"
+          }
+        }
+      },
+      "CreateEmployeeDto": {
+        "required": [
+          "email",
+          "name",
+          "password",
+          "role",
+          "surname"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "74f61000-8193-4b75-9a50-3ced99961988"
+          },
+          "name": {
+            "type": "string",
+            "example": "Paulus"
+          },
+          "surname": {
+            "type": "string",
+            "example": "Broeren"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "paulus-broeren@novi-garage.nl"
+          },
+          "password": {
+            "type": "string",
+            "example": "QZ-r6XA$"
+          },
+          "role": {
+            "type": "string",
+            "example": "mechanic",
+            "enum": [
+              "admin",
+              "administrative",
+              "backoffice",
+              "cashier",
+              "mechanic"
+            ]
+          }
+        }
+      },
+      "CreateCustomerDto": {
+        "required": [
+          "email",
+          "name",
+          "phone",
+          "surname"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "8102cd51-1f2f-4051-974f-b20dda3ea5ec"
+          },
+          "name": {
+            "type": "string",
+            "example": "Gert"
+          },
+          "surname": {
+            "type": "string",
+            "example": "Veldman"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "gert.veldman@klant.novi-garage.nl"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+31 6 12345678"
+          }
+        }
+      },
+      "CreateActionDto": {
+        "required": [
+          "name",
+          "price"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "fc6cbf76-837a-4ea6-a20b-0e22f817e55a"
+          },
+          "name": {
+            "type": "string",
+            "example": "Jan"
+          },
+          "price": {
+            "minimum": 0,
+            "type": "number",
+            "format": "double"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    }
+  }
+}
