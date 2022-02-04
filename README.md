@@ -12,7 +12,7 @@ requirements, een klassendiagram en 2 sequence diagrammen waardoor de architectu
 ## Installatie
 
 Om de applicatie te installeren wordt gebruikt gemaakt van docker. Door het volgende commando te runnen kan de
-applicatie gestart worden `docker run --env-file <path> -p 8080:<port> timonoordzee/novi_backend:latest`
+applicatie gestart worden `docker run --env-file <path> -p 8080:<port> timonoordzee/novi_backend:1.0.1`
 
 Meer informatie over het installeren van de applicatie, importeren van demo data en de documentatie is te vinden in
 de [Handleiding](./documentation/Handleiding.md).
