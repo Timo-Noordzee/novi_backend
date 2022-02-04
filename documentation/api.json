@@ -2551,7 +2551,7 @@
           },
           "name": {
             "type": "string",
-            "example": "Jan"
+            "example": "Ruitenwisser vervangen"
           },
           "price": {
             "minimum": 0,

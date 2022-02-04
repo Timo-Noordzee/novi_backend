@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.timo_noordzee.novi</groupId>
 	<artifactId>backend</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<name>Garage backend</name>
 	<description>Integrale eindopdracht Backend Programming o.b.v. voorbeeld garage casus</description>
 	<properties>
@@ -92,7 +92,7 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.3.1</version>
+			<version>42.3.2</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
