@@ -75,7 +75,7 @@ Om de image te kunnen runnen dien je onderstaande commando uit te voeren. De pla
 worden door het eerder aangemaakte `.env` bestand. De placeholder `<port>` dient vervangen te worden door de poort
 waarop je de applicatie wil draaien.
 
-`docker run --env-file <path> -p 8080:<port> timonoordzee/novi_backend:latest`
+`docker run --env-file <path> -p 8080:<port> timonoordzee/novi_backend:1.0.1`
 
 Na het uitvoeren van bovenstaande commando zou de applicatie moeten starten. De applicatie is vervolgens te benaderen op
 localhost met de gespecificeerde poort.
